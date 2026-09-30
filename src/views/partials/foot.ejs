@@ -1,0 +1,76 @@
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="about">
+        <a class="brand" href="/"><%- include('logo-mark') %><span class="brand-text">ProChef<small>by Makxim</small></span></a>
+        <p>Bếp điện từ đơn và đôi cho gian bếp Việt hiện đại — nấu nhanh, an toàn cho cả nhà và tiết kiệm điện mỗi ngày.</p>
+      </div>
+      <div>
+        <h3>Sản phẩm</h3>
+        <ul>
+          <li><a href="/bep-tu-don">Bếp từ đơn</a></li>
+          <li><a href="/bep-tu-doi">Bếp từ đôi</a></li>
+          <li><a href="/so-sanh">So sánh sản phẩm</a></li>
+          <li><a href="/san-pham">Tất cả sản phẩm</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Hỗ trợ khách hàng</h3>
+        <ul>
+          <li><a href="/tra-cuu-don-hang">Tra cứu đơn hàng</a></li>
+          <li><a href="/chinh-sach/chinh-sach-bao-hanh">Chính sách bảo hành</a></li>
+          <li><a href="/chinh-sach/doi-tra-van-chuyen">Vận chuyển &amp; đổi trả</a></li>
+          <li><a href="/chinh-sach/thanh-toan">Hướng dẫn thanh toán</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Liên hệ</h3>
+        <ul class="footer-contact">
+          <li><%- icon('phone', { size: 16 }) %><a href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%= shop.hotline %></a></li>
+          <li><%- icon('mail', { size: 16 }) %><a href="mailto:<%= shop.email %>"><%= shop.email %></a></li>
+          <li><%- icon('map-pin', { size: 16 }) %><span><%= shop.address %></span></li>
+          <li><%- icon('clock', { size: 16 }) %><span><%= shop.hours %></span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <%= new Date().getFullYear() %> <%= shop.legalName %>. Makxim ProChef là thương hiệu của Makxim.</span>
+      <div class="pay-logos" aria-label="Phương thức thanh toán"><span>COD</span><span class="momo">MoMo</span></div>
+    </div>
+  </div>
+</footer>
+
+<div class="float-chat" aria-label="Liên hệ nhanh">
+  <% if (shop.zaloUrl) { %>
+    <a class="zalo" href="<%= shop.zaloUrl %>" target="_blank" rel="noopener" aria-label="Chat Zalo với Makxim ProChef">Zalo<span class="tip">Chat Zalo</span></a>
+  <% } %>
+  <% if (shop.messengerUrl) { %>
+    <a class="messenger" href="<%= shop.messengerUrl %>" target="_blank" rel="noopener" aria-label="Chat Messenger với Makxim ProChef"><%- icon('message', { size: 24 }) %><span class="tip">Chat Messenger</span></a>
+  <% } %>
+  <a class="phone" href="tel:<%= shop.hotline.replace(/\s/g, '') %>" aria-label="Gọi hotline <%= shop.hotline %>"><%- icon('phone', { size: 22 }) %><span class="tip"><%= shop.hotline %></span></a>
+</div>
+
+<div class="drawer" data-drawer aria-hidden="true">
+  <div class="scrim" data-drawer-close></div>
+  <aside class="panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-head">
+      <h2 id="drawer-title">Giỏ hàng</h2>
+      <button class="btn btn-ghost btn-icon" type="button" data-drawer-close aria-label="Đóng giỏ hàng"><%- icon('x', { size: 22 }) %></button>
+    </div>
+    <div class="drawer-body" data-drawer-body aria-live="polite"></div>
+    <div class="drawer-foot" data-drawer-foot hidden>
+      <div class="ship-progress" data-ship-progress></div>
+      <div class="row"><span>Tạm tính</span><span class="num" data-drawer-subtotal></span></div>
+      <a class="btn btn-accent btn-lg btn-block" href="/thanh-toan">Thanh toán <%- icon('arrow-right', { size: 18 }) %></a>
+      <a class="btn btn-outline btn-block" href="/gio-hang">Xem giỏ hàng</a>
+    </div>
+  </aside>
+</div>
+
+<div class="toasts" data-toasts aria-live="polite"></div>
+
+<script src="/js/app.js?v=<%= assetVersion %>" defer></script>
+</body>
+</html>

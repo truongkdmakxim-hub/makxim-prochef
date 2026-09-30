@@ -1,0 +1,12 @@
+<dl>
+  <div><dt>Tạm tính</dt><dd><%= fmt.money(cart.subtotal) %></dd></div>
+  <% if (cart.discount) { %><div class="discount"><dt>Giảm giá <% if (cart.coupon) { %>(<%= cart.coupon.code %>)<% } %></dt><dd>−<%= fmt.money(cart.discount) %></dd></div><% } %>
+  <div><dt>Phí vận chuyển</dt><dd><%= cart.shippingFee ? fmt.money(cart.shippingFee) : 'Miễn phí' %></dd></div>
+  <div class="grand"><dt>Tổng cộng</dt><dd><%= fmt.money(cart.total) %></dd></div>
+</dl>
+<% if (cart.freeShipRemaining > 0) { %>
+  <div class="ship-progress">
+    <span>Mua thêm <b style="color: var(--ink)"><%= fmt.money(cart.freeShipRemaining) %></b> để được miễn phí vận chuyển</span>
+    <div class="bar"><i style="width: <%= Math.min(100, Math.round(((shop.freeShipFrom - cart.freeShipRemaining) / shop.freeShipFrom) * 100)) %>%"></i></div>
+  </div>
+<% } %>

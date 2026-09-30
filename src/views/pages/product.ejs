@@ -1,0 +1,130 @@
+<%- include('../partials/head', {
+  bodyClass: 'has-buybar',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    sku: product.sku,
+    brand: { '@type': 'Brand', name: 'Makxim ProChef' },
+    description: product.short_desc,
+    image: product.images.map((u) => (u.startsWith('http') ? u : baseUrl + u)),
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'VND',
+      price: product.price,
+      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: baseUrl + '/san-pham/' + product.slug,
+    },
+  },
+}) %>
+<% const hlIcons = ['zap', 'gauge', 'shield']; %>
+<div class="container">
+  <nav class="crumbs" aria-label="Breadcrumb" style="padding-block: 24px 12px">
+    <a href="/">Trang chủ</a><%- icon('chevron-right') %>
+    <a href="/<%= product.line === 'doi' ? 'bep-tu-doi' : 'bep-tu-don' %>"><%= product.lineLabel %></a><%- icon('chevron-right') %>
+    <span aria-current="page"><%= product.name %></span>
+  </nav>
+
+  <div class="pdp">
+    <div class="gallery" data-gallery>
+      <div class="main"><img src="<%= product.image %>" alt="<%= product.name %>" width="800" height="800" data-gallery-main fetchpriority="high"></div>
+      <% if (product.images.length > 1) { %>
+        <div class="thumbs" role="group" aria-label="Hình ảnh sản phẩm">
+          <% product.images.forEach((src, i) => { %>
+            <button type="button" aria-pressed="<%= i === 0 %>" data-gallery-thumb="<%= src %>" aria-label="Xem ảnh <%= i + 1 %>"><img src="<%= src %>" alt="" width="84" height="84" loading="lazy"></button>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="pdp-info">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap">
+        <span class="badge"><%= product.lineLabel %></span>
+        <% if (product.badge) { %><span class="badge badge-dark"><%= product.badge %></span><% } %>
+      </div>
+      <div style="display: grid; gap: 10px">
+        <h1><%= product.name %></h1>
+        <p class="lead"><%= product.short_desc %></p>
+      </div>
+
+      <div class="pdp-price">
+        <span class="now"><%= fmt.money(product.price) %></span>
+        <% if (product.compare_price) { %>
+          <span class="was"><%= fmt.money(product.compare_price) %></span>
+          <span class="badge badge-accent">Tiết kiệm <%= fmt.money(product.compare_price - product.price) %></span>
+        <% } %>
+      </div>
+
+      <div class="highlights">
+        <% product.highlights.slice(0, 3).forEach((h, i) => { %><div><%- icon(hlIcons[i] || 'check', { size: 20 }) %><%= h %></div><% }) %>
+      </div>
+
+      <% if (product.stock > 0) { %>
+        <span class="stock-note <%= product.stock <= 5 ? 'low' : '' %>"><%= product.stock <= 5 ? `Chỉ còn ${product.stock} sản phẩm` : 'Còn hàng — giao trong 1–3 ngày' %></span>
+        <form action="/gio-hang/them" method="post" data-add-to-cart data-main-buy>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="productId" value="<%= product.id %>">
+          <div class="buy-row">
+            <div class="stepper" data-stepper>
+              <button type="button" data-step="-1" aria-label="Giảm số lượng"><%- icon('minus', { size: 18 }) %></button>
+              <label class="visually-hidden" for="qty">Số lượng</label>
+              <input id="qty" name="qty" type="number" inputmode="numeric" min="1" max="<%= Math.min(10, product.stock) %>" value="1">
+              <button type="button" data-step="1" aria-label="Tăng số lượng"><%- icon('plus', { size: 18 }) %></button>
+            </div>
+            <button class="btn btn-primary btn-lg" type="submit"><%- icon('bag', { size: 18 }) %> Thêm vào giỏ</button>
+          </div>
+          <button class="btn btn-accent btn-lg btn-block" type="submit" name="redirect" value="checkout" style="margin-top: 12px" data-buy-now>Mua ngay</button>
+        </form>
+      <% } else { %>
+        <span class="stock-note out">Tạm hết hàng</span>
+        <a class="btn btn-primary btn-lg" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%- icon('phone', { size: 18 }) %> Gọi để đặt trước</a>
+      <% } %>
+
+      <div class="perks">
+        <div><%- icon('truck') %><span><b>Miễn phí giao hàng</b> toàn quốc cho đơn từ <%= fmt.money(shop.freeShipFrom) %></span></div>
+        <div><%- icon('shield') %><span><b>Bảo hành <%= (product.specs.find((s) => s[0] === 'Bảo hành') || [, '24 tháng'])[1] %></b> chính hãng</span></div>
+        <div><%- icon('rotate') %><span><b>1 đổi 1 trong 30 ngày</b> nếu lỗi nhà sản xuất</span></div>
+        <div><%- icon('wallet') %><span>Thanh toán <b>COD</b> hoặc <b>ví MoMo</b></span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="pdp-tabs" data-tabs>
+    <div class="segmented" role="tablist" aria-label="Thông tin sản phẩm">
+      <button type="button" role="tab" id="tab-desc" aria-controls="panel-desc" aria-selected="true">Mô tả</button>
+      <button type="button" role="tab" id="tab-specs" aria-controls="panel-specs" aria-selected="false" tabindex="-1">Thông số kỹ thuật</button>
+    </div>
+    <div class="tab-panels">
+      <div class="tab-panel" role="tabpanel" id="panel-desc" aria-labelledby="tab-desc">
+        <div class="prose">
+          <% fmt.paragraphs(product.description).forEach((para) => { %><p><%= para %></p><% }) %>
+          <% if (product.features.length) { %>
+            <h2 class="h3" style="margin-top: 12px">Tính năng nổi bật</h2>
+            <ul class="feature-list"><% product.features.forEach((f) => { %><li><%- icon('check', { size: 18 }) %><%= f %></li><% }) %></ul>
+          <% } %>
+        </div>
+      </div>
+      <div class="tab-panel" role="tabpanel" id="panel-specs" aria-labelledby="tab-specs" hidden>
+        <table class="spec-table">
+          <caption class="visually-hidden">Thông số kỹ thuật <%= product.name %></caption>
+          <tbody><% product.specs.forEach(([k, v]) => { %><tr><th scope="row"><%= k %></th><td><%= v %></td></tr><% }) %></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <% if (related.length) { %>
+    <section class="section" style="padding-bottom: 0">
+      <div class="section-head"><div><h2 class="h2">Có thể bạn cũng thích</h2></div><a class="link" href="/so-sanh">So sánh tất cả <%- icon('arrow-right', { size: 16 }) %></a></div>
+      <div class="product-grid"><% related.forEach((p, index) => { %><%- include('../partials/product-card', { p, index }) %><% }) %></div>
+    </section>
+  <% } %>
+</div>
+
+<% if (product.stock > 0) { %>
+  <div class="buybar" data-buybar>
+    <div class="meta"><b><%= product.name %></b><span><%= fmt.money(product.price) %></span></div>
+    <button class="btn btn-accent" type="button" data-buybar-submit>Thêm vào giỏ</button>
+  </div>
+<% } %>
+<%- include('../partials/foot') %>

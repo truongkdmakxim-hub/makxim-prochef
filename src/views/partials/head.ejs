@@ -1,0 +1,98 @@
+<%
+  const pageTitle = meta.title ? (meta.title.includes('ProChef') ? meta.title : `${meta.title} | Makxim ProChef`) : 'Makxim ProChef';
+  const description = meta.description || 'Bếp điện từ đơn và đôi Makxim ProChef — nấu nhanh, an toàn, tiết kiệm điện. Bảo hành chính hãng, miễn phí giao hàng.';
+  const nav = [
+    { href: '/bep-tu-don', label: 'Bếp từ đơn' },
+    { href: '/bep-tu-doi', label: 'Bếp từ đôi' },
+    { href: '/so-sanh', label: 'So sánh' },
+    { href: '/gioi-thieu', label: 'Về ProChef' },
+    { href: '/lien-he', label: 'Hỗ trợ' },
+  ];
+%><!doctype html>
+<html lang="vi" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title><%= pageTitle %></title>
+  <meta name="description" content="<%= description %>">
+  <% if (meta.robots) { %><meta name="robots" content="<%= meta.robots %>"><% } %>
+  <% if (meta.canonical) { %><link rel="canonical" href="<%= meta.canonical %>"><% } %>
+  <meta property="og:site_name" content="Makxim ProChef">
+  <meta property="og:type" content="<%= meta.type === 'product' ? 'product' : 'website' %>">
+  <meta property="og:title" content="<%= pageTitle %>">
+  <meta property="og:description" content="<%= description %>">
+  <meta property="og:locale" content="vi_VN">
+  <meta name="theme-color" content="#fafaf9">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/app.css?v=<%= assetVersion %>">
+  <% if (typeof jsonLd !== 'undefined' && jsonLd) { %><script type="application/ld+json"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script><% } %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<a class="skip-link" href="#main">Bỏ qua đến nội dung</a>
+
+<div class="announce">
+  <div class="container">
+    <span>Miễn phí giao hàng cho đơn từ <b><%= fmt.money(shop.freeShipFrom) %></b></span>
+    <span class="sep hide-sm" aria-hidden="true">•</span>
+    <span class="hide-sm">Bảo hành chính hãng đến <b>48 tháng</b></span>
+    <span class="sep hide-sm" aria-hidden="true">•</span>
+    <span class="hide-sm">1 đổi 1 trong <b>30 ngày</b></span>
+  </div>
+</div>
+
+<header class="site-header" data-header>
+  <div class="container nav">
+    <a class="brand" href="/" aria-label="Makxim ProChef — Trang chủ">
+      <%- include('logo-mark') %>
+      <span class="brand-text">ProChef<small>by Makxim</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Danh mục chính">
+      <% nav.forEach((item) => { %>
+        <a href="<%= item.href %>" <%- currentPath === item.href ? 'aria-current="page"' : '' %>><%= item.label %></a>
+      <% }) %>
+    </nav>
+    <div class="nav-actions">
+      <a class="nav-hotline" href="tel:<%= shop.hotline.replace(/\s/g, '') %>" aria-label="Gọi hotline <%= shop.hotline %>">
+        <%- icon('phone', { size: 18 }) %><span><%= shop.hotline %></span>
+      </a>
+      <a class="btn btn-ghost btn-icon cart-btn" href="/gio-hang" data-cart-open aria-label="Giỏ hàng (<%= cartCount %> sản phẩm)">
+        <%- icon('bag', { size: 22 }) %>
+        <span class="cart-count" data-cart-count data-count="<%= cartCount %>"><%= cartCount %></span>
+      </a>
+      <button class="btn btn-ghost btn-icon menu-toggle" type="button" data-menu-open aria-label="Mở menu" aria-controls="mobile-nav" aria-expanded="false">
+        <%- icon('menu', { size: 22 }) %>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobile-nav" data-mobile-nav aria-hidden="true">
+  <div class="scrim" data-menu-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="panel-head">
+      <a class="brand" href="/"><%- include('logo-mark') %><span class="brand-text">ProChef<small>by Makxim</small></span></a>
+      <button class="btn btn-ghost btn-icon" type="button" data-menu-close aria-label="Đóng menu"><%- icon('x', { size: 22 }) %></button>
+    </div>
+    <nav aria-label="Menu di động">
+      <a href="/san-pham">Tất cả sản phẩm <%- icon('chevron-right', { size: 18 }) %></a>
+      <% nav.forEach((item) => { %><a href="<%= item.href %>"><%= item.label %> <%- icon('chevron-right', { size: 18 }) %></a><% }) %>
+      <a href="/tra-cuu-don-hang">Tra cứu đơn hàng <%- icon('chevron-right', { size: 18 }) %></a>
+    </nav>
+    <a class="btn btn-primary btn-lg" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%- icon('phone', { size: 18 }) %> Gọi <%= shop.hotline %></a>
+  </div>
+</div>
+
+<main id="main">
+<% if (flashes.length) { %>
+  <div class="container flash-stack" role="status">
+    <% flashes.forEach((f) => { %>
+      <div class="alert alert-<%= f.type === 'error' ? 'error' : f.type === 'info' ? 'info' : 'success' %>">
+        <%- icon(f.type === 'error' ? 'alert' : f.type === 'info' ? 'info' : 'circle-check', { size: 18 }) %><span><%= f.message %></span>
+      </div>
+    <% }) %>
+  </div>
+<% } %>

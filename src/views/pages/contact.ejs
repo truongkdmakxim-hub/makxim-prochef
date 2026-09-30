@@ -1,0 +1,18 @@
+<%- include('../partials/head') %>
+<div class="container">
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Trang chủ</a><%- icon('chevron-right') %><span aria-current="page">Liên hệ</span></nav>
+    <h1 class="h1">Chúng tôi luôn sẵn sàng hỗ trợ</h1>
+    <p class="lead">Tư vấn chọn bếp, hỗ trợ lắp đặt và bảo hành — liên hệ ProChef qua kênh thuận tiện nhất với bạn.</p>
+  </header>
+  <div class="contact-grid">
+    <a class="tile" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><span class="ico"><%- icon('phone') %></span><h3>Hotline</h3><p><b style="color: var(--ink); font-size: 1.25rem"><%= shop.hotline %></b><br><%= shop.hours %></p></a>
+    <% if (shop.zaloUrl) { %>
+      <a class="tile" href="<%= shop.zaloUrl %>" target="_blank" rel="noopener"><span class="ico"><%- icon('message') %></span><h3>Zalo</h3><p>Nhắn tin, gửi ảnh gian bếp để được tư vấn model phù hợp.</p></a>
+    <% } else { %>
+      <a class="tile" href="mailto:<%= shop.email %>"><span class="ico"><%- icon('mail') %></span><h3>Email</h3><p><%= shop.email %><br>Phản hồi trong 24 giờ làm việc.</p></a>
+    <% } %>
+    <div class="tile"><span class="ico"><%- icon('map-pin') %></span><h3>Showroom</h3><p><%= shop.address %></p></div>
+  </div>
+</div>
+<%- include('../partials/foot') %>

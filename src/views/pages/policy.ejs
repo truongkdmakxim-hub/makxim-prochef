@@ -1,0 +1,23 @@
+<%- include('../partials/head') %>
+<%
+  const links = [['gioi-thieu', '/gioi-thieu'], ...Object.keys(pages).filter((k) => k !== 'gioi-thieu').map((k) => [k, `/chinh-sach/${k}`])];
+%>
+<div class="container">
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Trang chủ</a><%- icon('chevron-right') %><span aria-current="page"><%= page.title %></span></nav>
+    <h1 class="h1"><%= page.title %></h1>
+    <p class="lead" style="max-width: 760px"><%= page.lead %></p>
+  </header>
+  <div class="doc-layout">
+    <nav class="doc-nav" aria-label="Thông tin">
+      <% links.forEach(([key, href]) => { %><a href="<%= href %>" <%- key === slug ? 'aria-current="page"' : '' %>><%= pages[key].title %></a><% }) %>
+      <a href="/lien-he">Liên hệ</a>
+    </nav>
+    <article class="doc">
+      <% page.sections.forEach((s) => { %>
+        <section><h2><%= s.h %></h2><% s.p.forEach((para) => { %><p><%= para %></p><% }) %></section>
+      <% }) %>
+    </article>
+  </div>
+</div>
+<%- include('../partials/foot') %>

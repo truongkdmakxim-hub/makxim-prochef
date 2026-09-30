@@ -1,0 +1,39 @@
+<%- include('../partials/head') %>
+<%
+  const tabs = [
+    { href: '/san-pham', key: 'all', label: 'Tất cả' },
+    { href: '/bep-tu-don', key: 'don', label: 'Bếp từ đơn' },
+    { href: '/bep-tu-doi', key: 'doi', label: 'Bếp từ đôi' },
+  ];
+  const sorts = { featured: 'Nổi bật', 'price-asc': 'Giá thấp → cao', 'price-desc': 'Giá cao → thấp', newest: 'Mới nhất' };
+%>
+<div class="container">
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Trang chủ</a><%- icon('chevron-right') %><span aria-current="page"><%= title %></span></nav>
+    <h1 class="h1"><%= title %></h1>
+    <p class="lead"><%= lead %></p>
+  </header>
+
+  <div class="toolbar">
+    <nav class="segmented" aria-label="Dòng sản phẩm">
+      <% tabs.forEach((t) => { %><a href="<%= t.href %>" <%- activeLine === t.key ? 'aria-current="page"' : '' %>><%= t.label %></a><% }) %>
+    </nav>
+    <form method="get" data-autosubmit>
+      <label class="visually-hidden" for="sort">Sắp xếp</label>
+      <select class="select" id="sort" name="sort">
+        <% Object.entries(sorts).forEach(([k, v]) => { %><option value="<%= k %>" <%= sort === k ? 'selected' : '' %>><%= v %></option><% }) %>
+      </select>
+      <noscript><button class="btn btn-sm btn-outline" type="submit">Áp dụng</button></noscript>
+    </form>
+  </div>
+
+  <p class="muted" style="margin-bottom: 20px; font-size: .9375rem"><%= products.length %> sản phẩm</p>
+  <% if (products.length) { %>
+    <div class="product-grid">
+      <% products.forEach((p, index) => { %><%- include('../partials/product-card', { p, index }) %><% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty-state"><span class="ico"><%- icon('package', { size: 28 }) %></span><p>Chưa có sản phẩm trong danh mục này.</p><a class="btn btn-primary" href="/san-pham">Xem tất cả</a></div>
+  <% } %>
+</div>
+<%- include('../partials/foot') %>

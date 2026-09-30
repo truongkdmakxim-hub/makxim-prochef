@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<div class="container" style="max-width: 560px">
+  <header class="page-head" style="text-align: center; justify-items: center">
+    <h1 class="h1">Tra cứu đơn hàng</h1>
+    <p class="lead">Nhập mã đơn hàng và số điện thoại đặt hàng để xem trạng thái.</p>
+  </header>
+  <form class="form-card" action="/tra-cuu-don-hang" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% if (error) { %><div class="alert alert-error" role="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div><% } %>
+    <div class="field">
+      <label for="code">Mã đơn hàng</label>
+      <input id="code" name="code" value="<%= values.code || '' %>" placeholder="VD: PC260930AB12" required autocomplete="off" style="text-transform: uppercase">
+    </div>
+    <div class="field">
+      <label for="phone">Số điện thoại</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" value="<%= values.phone || '' %>" required autocomplete="tel">
+    </div>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><%- icon('search', { size: 18 }) %> Tra cứu</button>
+  </form>
+</div>
+<%- include('../partials/foot') %>

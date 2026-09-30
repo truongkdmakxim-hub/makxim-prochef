@@ -1,0 +1,66 @@
+<%- include('_head') %>
+<%
+  const v = (k) => (product[k] == null ? '' : product[k]);
+  const f = (k) => 'field' + (errors[k] ? ' has-error' : '');
+  const e = (k) => (errors[k] ? `<span class="error">${errors[k]}</span>` : '');
+  const action = isNew ? '/admin/san-pham/moi' : `/admin/san-pham/${product.id}`;
+%>
+<div class="admin-top">
+  <div>
+    <a class="link" href="/admin/san-pham" style="font-size: .875rem"><%- icon('chevron-left', { size: 16 }) %> Sản phẩm</a>
+    <h1><%= isNew ? 'Thêm sản phẩm' : product.name %></h1>
+  </div>
+  <% if (!isNew && product.is_active) { %><a class="btn btn-outline btn-sm" href="/san-pham/<%= product.slug %>" target="_blank" rel="noopener"><%- icon('external', { size: 16 }) %> Xem trên cửa hàng</a><% } %>
+</div>
+
+<% if (Object.keys(errors).length) { %><div class="alert alert-error" role="alert" style="margin-bottom: 16px"><%- icon('alert', { size: 18 }) %><span>Vui lòng kiểm tra lại các trường được đánh dấu.</span></div><% } %>
+
+<form class="admin-form" method="post" action="<%= action %>" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="stack">
+    <section class="card form-grid">
+      <div class="<%= f('name') %> full"><label for="name">Tên sản phẩm</label><input id="name" name="name" value="<%= v('name') %>" required><%- e('name') %></div>
+      <div class="<%= f('slug') %>"><label for="slug">Đường dẫn (slug)</label><input id="slug" name="slug" value="<%= v('slug') %>"><%- e('slug') %></div>
+      <div class="<%= f('sku') %>"><label for="sku">Mã SKU</label><input id="sku" name="sku" value="<%= v('sku') %>" required><%- e('sku') %></div>
+      <div class="field full"><label for="tagline">Khẩu hiệu ngắn</label><input id="tagline" name="tagline" value="<%= v('tagline') %>" maxlength="255"></div>
+      <div class="field full"><label for="short_desc">Mô tả ngắn <span class="opt">(hiển thị dưới tên, dùng cho SEO)</span></label><textarea id="short_desc" name="short_desc" maxlength="500"><%= v('short_desc') %></textarea></div>
+      <div class="field full"><label for="description">Mô tả chi tiết <span class="opt">(cách đoạn bằng một dòng trống)</span></label><textarea id="description" name="description" style="min-height: 180px"><%= v('description') %></textarea></div>
+    </section>
+    <section class="card form-grid">
+      <div class="field full"><label for="highlights">Điểm nổi bật <span class="opt">(mỗi dòng một ý, tối đa 4)</span></label><textarea id="highlights" name="highlights"><%= product.highlights.join('\n') %></textarea></div>
+      <div class="field full"><label for="specs">Thông số kỹ thuật <span class="opt">(mỗi dòng dạng “Tên: Giá trị”)</span></label><textarea id="specs" name="specs" style="min-height: 200px"><%= product.specs.map(([k, val]) => `${k}: ${val}`).join('\n') %></textarea></div>
+      <div class="field full"><label for="features">Tính năng <span class="opt">(mỗi dòng một tính năng)</span></label><textarea id="features" name="features" style="min-height: 140px"><%= product.features.join('\n') %></textarea></div>
+    </section>
+    <section class="card" style="display: grid; gap: 16px">
+      <h2 style="margin: 0">Hình ảnh</h2>
+      <% if (product.images.length) { %>
+        <div class="image-grid">
+          <% product.images.forEach((src, i) => { %>
+            <label><input type="checkbox" name="keep_images" value="<%= src %>" checked aria-label="Giữ ảnh <%= i + 1 %>"><img src="<%= src %>" alt=""><%= i === 0 ? 'Ảnh chính' : `Ảnh ${i + 1}` %></label>
+          <% }) %>
+        </div>
+        <p class="hint muted" style="font-size: .8125rem">Bỏ chọn để xóa ảnh. Ảnh đầu tiên là ảnh chính.</p>
+      <% } %>
+      <div class="field"><label for="images">Tải ảnh mới <span class="opt">(JPG, PNG, WebP · tối đa 4MB/ảnh)</span></label><input id="images" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple></div>
+      <div class="field"><label for="image_urls">Hoặc dán URL ảnh <span class="opt">(mỗi dòng một URL)</span></label><textarea id="image_urls" name="image_urls" placeholder="https://…"></textarea></div>
+    </section>
+  </div>
+
+  <div class="stack">
+    <section class="card form-grid">
+      <div class="field full"><label for="line">Dòng sản phẩm</label>
+        <select id="line" name="line"><option value="don" <%= product.line === 'don' ? 'selected' : '' %>>Bếp từ đơn</option><option value="doi" <%= product.line === 'doi' ? 'selected' : '' %>>Bếp từ đôi</option></select>
+      </div>
+      <div class="<%= f('price') %>"><label for="price">Giá bán (₫)</label><input id="price" name="price" inputmode="numeric" value="<%= v('price') %>" required><%- e('price') %></div>
+      <div class="field"><label for="compare_price">Giá gốc (₫) <span class="opt">gạch ngang</span></label><input id="compare_price" name="compare_price" inputmode="numeric" value="<%= v('compare_price') %>"></div>
+      <div class="field"><label for="stock">Tồn kho</label><input id="stock" name="stock" inputmode="numeric" value="<%= v('stock') %>"></div>
+      <div class="field"><label for="power_w">Công suất (W)</label><input id="power_w" name="power_w" inputmode="numeric" value="<%= v('power_w') %>"></div>
+      <div class="field"><label for="badge">Nhãn <span class="opt">VD: Mới</span></label><input id="badge" name="badge" value="<%= v('badge') %>" maxlength="40"></div>
+      <div class="field"><label for="sort_order">Thứ tự hiển thị</label><input id="sort_order" name="sort_order" inputmode="numeric" value="<%= v('sort_order') %>"></div>
+      <label class="check full"><input type="checkbox" name="is_active" <%= product.is_active ? 'checked' : '' %>> Đang bán (hiển thị trên cửa hàng)</label>
+      <label class="check full"><input type="checkbox" name="is_featured" <%= product.is_featured ? 'checked' : '' %>> Sản phẩm nổi bật trên trang chủ</label>
+    </section>
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Lưu sản phẩm</button>
+  </div>
+</form>
+<%- include('_foot') %>

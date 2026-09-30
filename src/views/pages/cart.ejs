@@ -1,0 +1,74 @@
+<%- include('../partials/head') %>
+<div class="container">
+  <header class="page-head">
+    <h1 class="h1">Giỏ hàng</h1>
+    <% if (cart.count) { %><p class="muted"><%= cart.count %> sản phẩm</p><% } %>
+  </header>
+
+  <% cart.warnings.forEach((w) => { %><div class="alert alert-info" style="margin-bottom: 16px"><%- icon('info', { size: 18 }) %><span><%= w %></span></div><% }) %>
+
+  <% if (!cart.items.length) { %>
+    <div class="empty-state">
+      <span class="ico"><%- icon('bag', { size: 28 }) %></span>
+      <h2 class="h3">Giỏ hàng đang trống</h2>
+      <p>Khám phá các mẫu bếp từ ProChef và chọn chiếc phù hợp với gian bếp của bạn.</p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center">
+        <a class="btn btn-primary" href="/bep-tu-doi">Bếp từ đôi</a>
+        <a class="btn btn-outline" href="/bep-tu-don">Bếp từ đơn</a>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="cart-layout">
+      <div class="cart-list">
+        <% cart.items.forEach(({ product: p, qty, lineTotal }) => { %>
+          <div class="cart-row">
+            <a class="thumb" href="/san-pham/<%= p.slug %>"><img src="<%= p.image %>" alt="<%= p.name %>" width="104" height="104"></a>
+            <div class="info">
+              <a href="/san-pham/<%= p.slug %>"><%= p.name %></a>
+              <span class="muted" style="font-size: .875rem"><%= p.lineLabel %> · <%= fmt.money(p.price) %></span>
+              <div class="controls">
+                <form action="/gio-hang/cap-nhat" method="post" data-qty-form>
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="productId" value="<%= p.id %>">
+                  <div class="stepper sm" data-stepper>
+                    <button type="button" data-step="-1" aria-label="Giảm số lượng <%= p.name %>"><%- icon('minus', { size: 16 }) %></button>
+                    <label class="visually-hidden" for="qty-<%= p.id %>">Số lượng <%= p.name %></label>
+                    <input id="qty-<%= p.id %>" name="qty" type="number" inputmode="numeric" min="1" max="<%= Math.min(10, p.stock) %>" value="<%= qty %>">
+                    <button type="button" data-step="1" aria-label="Tăng số lượng <%= p.name %>"><%- icon('plus', { size: 16 }) %></button>
+                  </div>
+                  <noscript><button class="btn btn-sm btn-ghost" type="submit">Cập nhật</button></noscript>
+                </form>
+                <form action="/gio-hang/xoa" method="post">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="productId" value="<%= p.id %>">
+                  <button class="btn btn-ghost btn-icon" type="submit" aria-label="Xóa <%= p.name %> khỏi giỏ"><%- icon('trash', { size: 18 }) %></button>
+                </form>
+              </div>
+            </div>
+            <div class="total"><%= fmt.money(lineTotal) %></div>
+          </div>
+        <% }) %>
+      </div>
+
+      <aside class="summary">
+        <h2>Tóm tắt đơn hàng</h2>
+        <form class="coupon-form" action="/gio-hang/ma-giam-gia" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <% if (cart.coupon) { %>
+            <span class="chip" style="flex: 1; height: 44px"><%- icon('tag', { size: 16 }) %>&nbsp;<%= cart.coupon.code %></span>
+            <button class="btn btn-outline btn-sm" type="submit" name="remove" value="1" style="min-height: 44px">Bỏ mã</button>
+          <% } else { %>
+            <label class="visually-hidden" for="coupon">Mã giảm giá</label>
+            <input class="input" id="coupon" name="code" placeholder="Mã giảm giá" autocomplete="off" style="min-height: 44px; text-transform: uppercase">
+            <button class="btn btn-outline btn-sm" type="submit" style="min-height: 44px">Áp dụng</button>
+          <% } %>
+        </form>
+        <%- include('../partials/summary-lines', { cart }) %>
+        <a class="btn btn-accent btn-lg btn-block" href="/thanh-toan">Tiến hành thanh toán <%- icon('arrow-right', { size: 18 }) %></a>
+        <a class="btn btn-ghost btn-block" href="/san-pham">Tiếp tục mua sắm</a>
+        <p class="secure-note"><%- icon('lock', { size: 14 }) %> Thanh toán an toàn · COD &amp; MoMo</p>
+      </aside>
+    </div>
+  <% } %>
+</div>
+<%- include('../partials/foot') %>

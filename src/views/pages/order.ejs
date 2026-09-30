@@ -1,0 +1,71 @@
+<%- include('../partials/head') %>
+<%
+  const steps = ['new', 'confirmed', 'shipping', 'completed'];
+  const stepLabels = { new: 'Đã đặt hàng', confirmed: 'Đã xác nhận', shipping: 'Đang giao', completed: 'Hoàn tất' };
+  const reached = steps.indexOf(order.status);
+  const cancelled = order.status === 'cancelled';
+  const awaitingMomo = order.payment_method === 'momo' && order.payment_status !== 'paid' && !cancelled;
+  const heroIcon = cancelled || order.payment_status === 'failed' ? 'bad' : awaitingMomo ? 'warn' : '';
+  const ps = fmt.PAYMENT_STATUS[order.payment_status];
+%>
+<div class="container">
+  <div class="order-hero">
+    <span class="ico <%= heroIcon %>"><%- icon(cancelled ? 'circle-x' : awaitingMomo ? 'clock' : 'circle-check', { size: 36 }) %></span>
+    <h1 class="h1">
+      <%= cancelled ? 'Đơn hàng đã hủy' : awaitingMomo ? 'Đơn hàng đang chờ thanh toán' : 'Cảm ơn bạn đã đặt hàng!' %>
+    </h1>
+    <p class="lead" style="max-width: 560px">
+      Mã đơn hàng <span class="order-code"><%= order.code %></span>.
+      <% if (!cancelled) { %>Nhân viên ProChef sẽ gọi xác nhận tới <b style="color: var(--ink)"><%= order.phone %></b> trong giờ làm việc.<% } %>
+    </p>
+    <% if (canPayMomo) { %>
+      <form action="/don-hang/<%= order.code %>/thanh-toan-momo" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="t" value="<%= order.access_token %>">
+        <button class="btn btn-accent btn-lg" type="submit" data-submit>Thanh toán <%= fmt.money(order.total) %> qua MoMo</button>
+      </form>
+    <% } %>
+  </div>
+
+  <% if (!cancelled) { %>
+    <div class="timeline" aria-label="Trạng thái đơn hàng">
+      <% steps.forEach((s, i) => { %><div class="<%= i <= reached ? 'done' : '' %>" <%- i === reached ? 'aria-current="step"' : '' %>><%= stepLabels[s] %></div><% }) %>
+    </div>
+  <% } %>
+
+  <div class="order-grid">
+    <div class="form-card">
+      <h2>Thông tin giao hàng</h2>
+      <dl class="info-list">
+        <div><dt>Người nhận</dt><dd><%= order.customer_name %></dd></div>
+        <div><dt>Điện thoại</dt><dd><%= order.phone %></dd></div>
+        <% if (order.email) { %><div><dt>Email</dt><dd><%= order.email %></dd></div><% } %>
+        <div><dt>Địa chỉ</dt><dd><%= order.address %>, <%= order.ward %>, <%= order.province %></dd></div>
+        <% if (order.note) { %><div><dt>Ghi chú</dt><dd><%= order.note %></dd></div><% } %>
+        <div><dt>Thanh toán</dt><dd><%= fmt.PAYMENT_METHOD[order.payment_method] %> · <span class="pill tone-<%= ps.tone %>"><%= ps.label %></span></dd></div>
+        <div><dt>Ngày đặt</dt><dd><%= fmt.dateTime(order.created_at) %></dd></div>
+      </dl>
+      <p class="muted" style="font-size: .875rem">Lưu lại đường dẫn trang này hoặc dùng <a class="link" href="/tra-cuu-don-hang">Tra cứu đơn hàng</a> với mã đơn và số điện thoại.</p>
+    </div>
+    <aside class="summary" style="position: static">
+      <h2>Sản phẩm</h2>
+      <div class="summary-items">
+        <% items.forEach((i) => { %>
+          <div class="mini-item">
+            <span class="qty-badge"><img src="<%= i.image || '/img/products/placeholder.svg' %>" alt="" width="56" height="56"><em><%= i.qty %></em></span>
+            <div><b><%= i.name %></b><span><%= fmt.money(i.price) %></span></div>
+            <span class="p"><%= fmt.money(i.line_total) %></span>
+          </div>
+        <% }) %>
+      </div>
+      <dl>
+        <div><dt>Tạm tính</dt><dd><%= fmt.money(order.subtotal) %></dd></div>
+        <% if (order.discount) { %><div class="discount"><dt>Giảm giá (<%= order.coupon_code %>)</dt><dd>−<%= fmt.money(order.discount) %></dd></div><% } %>
+        <div><dt>Vận chuyển</dt><dd><%= order.shipping_fee ? fmt.money(order.shipping_fee) : 'Miễn phí' %></dd></div>
+        <div class="grand"><dt>Tổng cộng</dt><dd><%= fmt.money(order.total) %></dd></div>
+      </dl>
+      <a class="btn btn-outline btn-block" href="/san-pham">Tiếp tục mua sắm</a>
+    </aside>
+  </div>
+</div>
+<%- include('../partials/foot') %>

@@ -1,0 +1,31 @@
+<article class="product-card reveal" style="--d: <%= (typeof index !== 'undefined' ? index % 3 : 0) * 80 %>ms">
+  <a class="media" href="/san-pham/<%= p.slug %>" tabindex="-1" aria-hidden="true">
+    <img src="<%= p.image %>" alt="" width="800" height="800" loading="lazy" decoding="async">
+    <% if (p.images[1]) { %><img class="alt" src="<%= p.images[1] %>" alt="" width="800" height="800" loading="lazy" decoding="async"><% } %>
+  </a>
+  <div class="badges">
+    <% if (p.badge) { %><span class="badge <%= p.badge === 'Cao cấp' ? 'badge-dark' : '' %>"><%= p.badge %></span><% } %>
+    <% if (p.discountPercent) { %><span class="badge badge-accent">−<%= p.discountPercent %>%</span><% } %>
+  </div>
+  <div class="body">
+    <span class="line-label"><%= p.lineLabel %> · <%= p.power_w %>W</span>
+    <h3><a href="/san-pham/<%= p.slug %>"><%= p.name %></a></h3>
+    <p class="tagline"><%= p.tagline %></p>
+    <div class="chips"><% p.highlights.slice(0, 3).forEach((h) => { %><span class="chip"><%= h %></span><% }) %></div>
+    <div class="foot">
+      <div class="price">
+        <% if (p.compare_price) { %><span class="was"><%= fmt.money(p.compare_price) %></span><% } %>
+        <span class="now"><%= fmt.money(p.price) %></span>
+      </div>
+      <% if (p.stock > 0) { %>
+        <form action="/gio-hang/them" method="post" data-add-to-cart>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="productId" value="<%= p.id %>">
+          <button class="btn btn-primary btn-icon" type="submit" aria-label="Thêm <%= p.name %> vào giỏ hàng"><%- icon('plus', { size: 20 }) %></button>
+        </form>
+      <% } else { %>
+        <span class="pill tone-neutral">Tạm hết hàng</span>
+      <% } %>
+    </div>
+  </div>
+</article>

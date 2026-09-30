@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+<%
+  const rows = [...new Set(products.flatMap((p) => p.specs.map((s) => s[0])))];
+  const specOf = (p, key) => (p.specs.find((s) => s[0] === key) || [])[1] || '—';
+%>
+<div class="container">
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Trang chủ</a><%- icon('chevron-right') %><span aria-current="page">So sánh</span></nav>
+    <h1 class="h1">So sánh bếp từ ProChef</h1>
+    <p class="lead">Toàn bộ thông số của <%= products.length %> mẫu bếp trong một bảng — vuốt ngang để xem thêm trên điện thoại.</p>
+  </header>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Bảng so sánh sản phẩm">
+    <table class="compare">
+      <thead>
+        <tr>
+          <th scope="col"><span class="visually-hidden">Thông số</span></th>
+          <% products.forEach((p) => { %>
+            <th scope="col">
+              <a href="/san-pham/<%= p.slug %>"><img src="<%= p.image %>" alt="" width="120" height="100" loading="lazy"><span style="display: block; font-weight: 700; color: var(--ink)"><%= p.name %></span></a>
+              <span class="num" style="font-weight: 600; color: var(--accent)"><%= fmt.money(p.price) %></span>
+            </th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.forEach((key) => { %>
+          <tr><th scope="row"><%= key %></th><% products.forEach((p) => { %><td><%= specOf(p, key) %></td><% }) %></tr>
+        <% }) %>
+        <tr>
+          <th scope="row"><span class="visually-hidden">Mua</span></th>
+          <% products.forEach((p) => { %><td><a class="btn btn-sm btn-primary" href="/san-pham/<%= p.slug %>">Xem chi tiết</a></td><% }) %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>

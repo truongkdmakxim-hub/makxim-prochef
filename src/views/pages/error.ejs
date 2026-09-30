@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<div class="container">
+  <div class="empty-state" style="padding-block: 96px">
+    <span class="ico"><%- icon(status === 404 ? 'search' : 'alert', { size: 28 }) %></span>
+    <span class="eyebrow">Lỗi <%= status %></span>
+    <h1 class="h1"><%= status === 404 ? 'Không tìm thấy trang' : 'Có lỗi xảy ra' %></h1>
+    <p><%= message %></p>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center">
+      <a class="btn btn-primary" href="/">Về trang chủ</a>
+      <a class="btn btn-outline" href="/san-pham">Xem sản phẩm</a>
+    </div>
+  </div>
+</div>
+<%- include('../partials/foot') %>

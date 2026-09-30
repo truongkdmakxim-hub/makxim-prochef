@@ -1,0 +1,53 @@
+<%- include('_head') %>
+<%
+  const qs = (overrides) => {
+    const params = new URLSearchParams({ status, q, page: 1, ...overrides });
+    for (const [k, v] of [...params]) if (!v || (k === 'page' && v === '1')) params.delete(k);
+    const s = params.toString();
+    return '/admin/don-hang' + (s ? '?' + s : '');
+  };
+  const allCount = Object.values(counts).reduce((a, b) => a + b, 0);
+%>
+<div class="admin-top"><h1>Đơn hàng</h1><span class="muted"><%= total %> đơn</span></div>
+
+<div class="filters">
+  <nav class="segmented" aria-label="Lọc trạng thái">
+    <a href="<%= qs({ status: '' }) %>" <%- !status ? 'aria-current="page"' : '' %>>Tất cả (<%= allCount %>)</a>
+    <% Object.entries(ORDER_STATUS).forEach(([k, s]) => { %><a href="<%= qs({ status: k }) %>" <%- status === k ? 'aria-current="page"' : '' %>><%= s.label %> (<%= counts[k] || 0 %>)</a><% }) %>
+  </nav>
+  <form method="get" role="search">
+    <% if (status) { %><input type="hidden" name="status" value="<%= status %>"><% } %>
+    <label class="visually-hidden" for="q">Tìm đơn</label>
+    <input class="input" id="q" name="q" value="<%= q %>" placeholder="Mã đơn, SĐT, tên…" style="min-height: 44px; width: 240px">
+    <button class="btn btn-outline btn-sm" type="submit" style="min-height: 44px"><%- icon('search', { size: 16 }) %> Tìm</button>
+  </form>
+</div>
+
+<section class="card">
+  <% if (!list.length) { %><p class="muted">Không có đơn hàng phù hợp.</p><% } else { %>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Khách hàng</th><th>Tỉnh/thành</th><th>Trạng thái</th><th>Thanh toán</th><th class="right">Tổng</th></tr></thead>
+    <tbody>
+      <% list.forEach((o) => { const s = ORDER_STATUS[o.status]; const ps = PAYMENT_STATUS[o.payment_status]; %>
+        <tr>
+          <td><a class="row-link" href="/admin/don-hang/<%= o.id %>"><%= o.code %></a></td>
+          <td><%= fmt.dateTime(o.created_at) %></td>
+          <td><%= o.customer_name %><br><span class="muted" style="font-size: .75rem"><%= o.phone %></span></td>
+          <td><%= o.province %></td>
+          <td><span class="pill tone-<%= s.tone %>"><%= s.label %></span></td>
+          <td><span class="pill tone-<%= ps.tone %>"><%= o.payment_method.toUpperCase() %> · <%= ps.label %></span></td>
+          <td class="right num"><b><%= fmt.money(o.total) %></b></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table></div>
+  <% if (pages > 1) { %>
+    <nav class="pager" aria-label="Phân trang">
+      <% if (page > 1) { %><a class="btn btn-outline btn-sm" href="<%= qs({ page: page - 1 }) %>"><%- icon('chevron-left', { size: 16 }) %> Trước</a><% } %>
+      <span class="btn btn-ghost btn-sm" aria-current="page">Trang <%= page %>/<%= pages %></span>
+      <% if (page < pages) { %><a class="btn btn-outline btn-sm" href="<%= qs({ page: page + 1 }) %>">Sau <%- icon('chevron-right', { size: 16 }) %></a><% } %>
+    </nav>
+  <% } %>
+  <% } %>
+</section>
+<%- include('_foot') %>

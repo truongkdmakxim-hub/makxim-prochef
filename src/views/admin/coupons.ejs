@@ -1,0 +1,42 @@
+<%- include('_head') %>
+<div class="admin-top"><h1>Mã giảm giá</h1></div>
+<div class="two-col">
+  <section class="card">
+    <% if (!coupons.length) { %><p class="muted">Chưa có mã giảm giá.</p><% } else { %>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Mã</th><th>Giảm</th><th>Đơn tối thiểu</th><th>Đã dùng</th><th>Hết hạn</th><th>Trạng thái</th><th></th></tr></thead>
+      <tbody>
+        <% coupons.forEach((c) => { %>
+          <tr>
+            <td><span class="order-code"><%= c.code %></span></td>
+            <td><%= c.type === 'percent' ? `${c.value}%` : fmt.money(c.value) %><% if (c.max_discount) { %><br><span class="muted" style="font-size: .75rem">tối đa <%= fmt.money(c.max_discount) %></span><% } %></td>
+            <td class="num"><%= fmt.money(c.min_order) %></td>
+            <td><%= c.used_count %><%= c.max_uses ? ` / ${c.max_uses}` : '' %></td>
+            <td><%= c.expires_at ? fmt.dateTime(c.expires_at) : '—' %></td>
+            <td><span class="pill <%= c.is_active ? 'tone-success' : 'tone-neutral' %>"><%= c.is_active ? 'Đang chạy' : 'Tạm dừng' %></span></td>
+            <td class="right">
+              <form class="inline-form" method="post" action="/admin/ma-giam-gia/<%= c.id %>/an-hien"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-ghost btn-sm" type="submit"><%= c.is_active ? 'Dừng' : 'Bật' %></button></form>
+              <form class="inline-form" method="post" action="/admin/ma-giam-gia/<%= c.id %>/xoa" data-confirm="Xóa mã <%= c.code %>? Thao tác không thể hoàn tác."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-ghost btn-sm" type="submit" aria-label="Xóa mã <%= c.code %>"><%- icon('trash', { size: 16 }) %></button></form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table></div>
+    <% } %>
+  </section>
+
+  <form class="card form-grid" method="post" action="/admin/ma-giam-gia">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <h2 class="full" style="margin: 0">Tạo mã mới</h2>
+    <% if (error) { %><div class="alert alert-error full" role="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div><% } %>
+    <div class="field full"><label for="code">Mã</label><input id="code" name="code" value="<%= values.code || '' %>" required style="text-transform: uppercase" placeholder="VD: TET2027"></div>
+    <div class="field"><label for="type">Loại</label><select id="type" name="type"><option value="percent" <%= values.type !== 'fixed' ? 'selected' : '' %>>Phần trăm (%)</option><option value="fixed" <%= values.type === 'fixed' ? 'selected' : '' %>>Số tiền (₫)</option></select></div>
+    <div class="field"><label for="value">Giá trị</label><input id="value" name="value" inputmode="numeric" value="<%= values.value || '' %>" required></div>
+    <div class="field"><label for="min_order">Đơn tối thiểu (₫)</label><input id="min_order" name="min_order" inputmode="numeric" value="<%= values.min_order || '' %>"></div>
+    <div class="field"><label for="max_discount">Giảm tối đa (₫)</label><input id="max_discount" name="max_discount" inputmode="numeric" value="<%= values.max_discount || '' %>"></div>
+    <div class="field"><label for="max_uses">Số lượt dùng</label><input id="max_uses" name="max_uses" inputmode="numeric" value="<%= values.max_uses || '' %>" placeholder="Không giới hạn"></div>
+    <div class="field"><label for="expires_at">Hết hạn</label><input id="expires_at" name="expires_at" type="date" value="<%= values.expires_at || '' %>"></div>
+    <button class="btn btn-primary btn-block full" type="submit">Tạo mã</button>
+  </form>
+</div>
+<%- include('_foot') %>

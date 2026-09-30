@@ -1,0 +1,46 @@
+<%
+  const adminNav = [
+    { href: '/admin', label: 'Tổng quan', icon: 'dashboard', match: (p) => p === '/' },
+    { href: '/admin/don-hang', label: 'Đơn hàng', icon: 'orders', match: (p) => p.startsWith('/don-hang') },
+    { href: '/admin/san-pham', label: 'Sản phẩm', icon: 'package', match: (p) => p.startsWith('/san-pham') },
+    { href: '/admin/ma-giam-gia', label: 'Mã giảm giá', icon: 'tag', match: (p) => p.startsWith('/ma-giam-gia') },
+  ];
+%><!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <title><%= meta.title %> · Quản trị ProChef</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/app.css?v=<%= assetVersion %>">
+  <link rel="stylesheet" href="/css/admin.css?v=<%= assetVersion %>">
+</head>
+<body class="admin">
+<div class="admin-shell">
+  <aside class="admin-side">
+    <a class="brand" href="/admin"><%- include('../partials/logo-mark') %><span class="brand-text">ProChef<small>Quản trị</small></span></a>
+    <nav aria-label="Quản trị">
+      <% adminNav.forEach((n) => { %>
+        <a href="<%= n.href %>" <%- n.match(adminPath) ? 'aria-current="page"' : '' %>><%- icon(n.icon, { size: 18 }) %><%= n.label %></a>
+      <% }) %>
+    </nav>
+    <div class="side-foot">
+      <span><%= adminName %></span>
+      <a href="/" target="_blank" rel="noopener"><%- icon('external', { size: 16 }) %>Xem cửa hàng</a>
+      <form action="/admin/dang-xuat" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit"><%- icon('logout', { size: 16 }) %>Đăng xuất</button>
+      </form>
+    </div>
+  </aside>
+  <main class="admin-main" id="main">
+    <% if (flashes.length) { %>
+      <div class="flash-stack" style="margin: 0 0 16px" role="status">
+        <% flashes.forEach((f) => { %><div class="alert alert-<%= f.type === 'error' ? 'error' : 'success' %>"><%- icon(f.type === 'error' ? 'alert' : 'circle-check', { size: 18 }) %><span><%= f.message %></span></div><% }) %>
+      </div>
+    <% } %>

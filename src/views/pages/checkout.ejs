@@ -1,0 +1,106 @@
+<%- include('../partials/head') %>
+<%
+  const val = (k) => values[k] || '';
+  const fieldClass = (k) => 'field' + (errors[k] ? ' has-error' : '');
+  const err = (k) => errors[k] ? `<span class="error" id="${k}-error">${icon('alert', { size: 14 })}${errors[k].replace(/</g, '&lt;')}</span>` : '';
+  const aria = (k) => errors[k] ? `aria-invalid="true" aria-describedby="${k}-error"` : '';
+  const momoAllowed = momoEnabled && cart.total <= momoLimit;
+%>
+<div class="container">
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/gio-hang">Giỏ hàng</a><%- icon('chevron-right') %><span aria-current="page">Thanh toán</span></nav>
+    <h1 class="h1">Thanh toán</h1>
+  </header>
+
+  <% if (formError) { %><div class="alert alert-error" role="alert" style="margin-bottom: 20px" tabindex="-1" data-autofocus><%- icon('alert', { size: 18 }) %><span><%= formError %></span></div><% } %>
+
+  <form class="checkout-layout" action="/thanh-toan" method="post" novalidate data-checkout>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="checkout-main">
+      <section class="form-card">
+        <h2><span class="step">1</span> Thông tin người nhận</h2>
+        <div class="form-grid">
+          <div class="<%= fieldClass('customer_name') %> full">
+            <label for="customer_name">Họ và tên</label>
+            <input id="customer_name" name="customer_name" value="<%= val('customer_name') %>" autocomplete="name" required minlength="2" <%- aria('customer_name') %>>
+            <%- err('customer_name') %>
+          </div>
+          <div class="<%= fieldClass('phone') %>">
+            <label for="phone">Số điện thoại</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" value="<%= val('phone') %>" autocomplete="tel" required placeholder="0912 345 678" <%- aria('phone') %>>
+            <%- err('phone') %>
+          </div>
+          <div class="<%= fieldClass('email') %>">
+            <label for="email">Email <span class="opt">(không bắt buộc)</span></label>
+            <input id="email" name="email" type="email" value="<%= val('email') %>" autocomplete="email" <%- aria('email') %>>
+            <% if (!errors.email) { %><span class="hint">Nhận xác nhận đơn hàng qua email</span><% } %>
+            <%- err('email') %>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-card">
+        <h2><span class="step">2</span> Địa chỉ giao hàng</h2>
+        <div class="form-grid">
+          <div class="<%= fieldClass('province') %>">
+            <label for="province">Tỉnh / Thành phố</label>
+            <select id="province" name="province" required autocomplete="address-level1" <%- aria('province') %>>
+              <option value="">Chọn tỉnh/thành</option>
+              <% provinces.forEach((p) => { %><option <%= val('province') === p ? 'selected' : '' %>><%= p %></option><% }) %>
+            </select>
+            <%- err('province') %>
+          </div>
+          <div class="<%= fieldClass('ward') %>">
+            <label for="ward">Phường / Xã</label>
+            <input id="ward" name="ward" value="<%= val('ward') %>" required autocomplete="address-level2" <%- aria('ward') %>>
+            <%- err('ward') %>
+          </div>
+          <div class="<%= fieldClass('address') %> full">
+            <label for="address">Số nhà, tên đường</label>
+            <input id="address" name="address" value="<%= val('address') %>" required autocomplete="street-address" <%- aria('address') %>>
+            <%- err('address') %>
+          </div>
+          <div class="field full">
+            <label for="note">Ghi chú <span class="opt">(không bắt buộc)</span></label>
+            <textarea id="note" name="note" maxlength="500" placeholder="VD: Giao giờ hành chính, cần lắp đặt bếp âm…"><%= val('note') %></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-card">
+        <h2><span class="step">3</span> Phương thức thanh toán</h2>
+        <div class="pay-options" role="radiogroup" aria-label="Phương thức thanh toán">
+          <label class="pay-option">
+            <input type="radio" name="payment_method" value="cod" <%= val('payment_method') !== 'momo' || !momoAllowed ? 'checked' : '' %>>
+            <span class="radio" aria-hidden="true"></span>
+            <span style="display: flex; gap: 14px; align-items: center"><span class="logo"><%- icon('banknote', { size: 22 }) %></span><span><b>Thanh toán khi nhận hàng (COD)</b><span>Kiểm tra hàng rồi mới thanh toán</span></span></span>
+          </label>
+          <label class="pay-option">
+            <input type="radio" name="payment_method" value="momo" <%= val('payment_method') === 'momo' && momoAllowed ? 'checked' : '' %> <%= momoAllowed ? '' : 'disabled' %>>
+            <span class="radio" aria-hidden="true"></span>
+            <span style="display: flex; gap: 14px; align-items: center"><span class="logo momo">MoMo</span><span><b>Ví MoMo</b><span><%= !momoEnabled ? 'Sắp ra mắt' : momoAllowed ? 'Quét QR hoặc xác nhận trên ứng dụng MoMo' : 'Đơn vượt hạn mức 50.000.000₫ của MoMo' %></span></span></span>
+          </label>
+        </div>
+        <% if (errors.payment_method) { %><span class="error" style="color: var(--danger); font-size: .875rem"><%= errors.payment_method %></span><% } %>
+      </section>
+    </div>
+
+    <aside class="summary">
+      <h2>Đơn hàng (<%= cart.count %>)</h2>
+      <div class="summary-items">
+        <% cart.items.forEach(({ product: p, qty, lineTotal }) => { %>
+          <div class="mini-item">
+            <span class="qty-badge"><img src="<%= p.image %>" alt="" width="56" height="56"><em><%= qty %></em></span>
+            <div><b><%= p.name %></b><span><%= p.lineLabel %></span></div>
+            <span class="p"><%= fmt.money(lineTotal) %></span>
+          </div>
+        <% }) %>
+      </div>
+      <%- include('../partials/summary-lines', { cart }) %>
+      <button class="btn btn-accent btn-lg btn-block" type="submit" data-submit>Đặt hàng · <%= fmt.money(cart.total) %></button>
+      <p class="secure-note"><%- icon('lock', { size: 14 }) %> Thông tin của bạn được bảo mật</p>
+      <p class="muted" style="font-size: .8125rem; text-align: center">Bằng việc đặt hàng, bạn đồng ý với <a class="link" href="/chinh-sach/doi-tra-van-chuyen">chính sách vận chuyển &amp; đổi trả</a>.</p>
+    </aside>
+  </form>
+</div>
+<%- include('../partials/foot') %>

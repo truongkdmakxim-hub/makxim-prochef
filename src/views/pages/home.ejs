@@ -1,0 +1,227 @@
+<%- include('../partials/head', {
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Makxim ProChef',
+    url: baseUrl,
+    logo: baseUrl + '/img/favicon.svg',
+    contactPoint: { '@type': 'ContactPoint', telephone: shop.hotline, contactType: 'customer service', areaServed: 'VN', availableLanguage: 'Vietnamese' },
+  },
+}) %>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><%- icon('sparkles', { size: 16 }) %> Dòng bếp từ Inverter mới</span>
+      <h1 class="display">Nấu nhanh hơn.<br>Bếp sạch hơn.<br>An tâm hơn.</h1>
+      <p class="lead">Bếp điện từ ProChef mang nhiệt ổn định của công nghệ Inverter vào gian bếp Việt — tiết kiệm điện đến 30%, an toàn tuyệt đối cho trẻ nhỏ.</p>
+      <div class="hero-cta">
+        <a class="btn btn-accent btn-lg" href="/bep-tu-doi">Mua bếp từ đôi <%- icon('arrow-right', { size: 18 }) %></a>
+        <a class="btn btn-outline btn-lg" href="/bep-tu-don">Xem bếp từ đơn</a>
+      </div>
+      <div class="hero-proof">
+        <span class="stars" aria-hidden="true"><% for (let i = 0; i < 5; i++) { %><%- icon('star', { size: 16 }) %><% } %></span>
+        <span><b style="color: var(--ink)">4,9/5</b> từ hơn 2.000 gia đình đang dùng ProChef</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="stage">
+        <img src="<%= heroProduct ? heroProduct.images[1] || heroProduct.image : '/img/products/placeholder.svg' %>" alt="<%= heroProduct ? heroProduct.name : 'Bếp từ ProChef' %> đang nấu" width="800" height="800" fetchpriority="high">
+      </div>
+      <div class="spec-float f1"><span class="ico"><%- icon('zap', { size: 18 }) %></span><span><b>4400W</b>Booster siêu tốc</span></div>
+      <div class="spec-float f2"><span class="ico"><%- icon('leaf', { size: 18 }) %></span><span><b>−30%</b>điện năng tiêu thụ</span></div>
+      <div class="spec-float f3"><span class="ico"><%- icon('shield', { size: 18 }) %></span><span><b>9 lớp</b>bảo vệ an toàn</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="trust" aria-label="Cam kết dịch vụ">
+  <div class="container trust-grid">
+    <div class="trust-item"><span class="ico"><%- icon('truck') %></span><div><b>Giao nhanh toàn quốc</b><span>Miễn phí từ <%= fmt.money(shop.freeShipFrom) %></span></div></div>
+    <div class="trust-item"><span class="ico"><%- icon('shield') %></span><div><b>Bảo hành đến 48 tháng</b><span>Tận nhà tại HN &amp; HCM</span></div></div>
+    <div class="trust-item"><span class="ico"><%- icon('rotate') %></span><div><b>1 đổi 1 trong 30 ngày</b><span>Nếu lỗi nhà sản xuất</span></div></div>
+    <div class="trust-item"><span class="ico"><%- icon('wallet') %></span><div><b>COD &amp; ví MoMo</b><span>Kiểm tra hàng trước khi trả</span></div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Hai dòng sản phẩm</span>
+        <h2 class="h2">Chọn chiếc bếp hợp với nhà bạn</h2>
+      </div>
+      <a class="link" href="/so-sanh">So sánh chi tiết <%- icon('arrow-right', { size: 16 }) %></a>
+    </div>
+    <div class="lines">
+      <a class="line-card reveal" href="/bep-tu-don">
+        <div class="copy">
+          <span class="eyebrow">Bếp từ đơn</span>
+          <h3 class="h2">Nhỏ gọn. Linh hoạt.</h3>
+          <p class="price-from">Từ <b><%= fmt.money(ranges.don.min) %></b> · Cho căn hộ, bữa lẩu, bếp phụ</p>
+          <span class="link">Khám phá <%- icon('arrow-right', { size: 16 }) %></span>
+        </div>
+        <img src="/img/products/prochef-s3-inverter-1.svg" alt="" width="800" height="800" loading="lazy">
+      </a>
+      <a class="line-card dark reveal" href="/bep-tu-doi" style="--d: 100ms">
+        <div class="copy">
+          <span class="eyebrow" style="color: #fdba74">Bếp từ đôi</span>
+          <h3 class="h2">Hai vùng nấu. Một bữa trọn vẹn.</h3>
+          <p class="price-from">Từ <b><%= fmt.money(ranges.doi.min) %></b> · Cho gia đình 3 – 6 người</p>
+          <span class="link">Khám phá <%- icon('arrow-right', { size: 16 }) %></span>
+        </div>
+        <img src="/img/products/prochef-d7-inverter-1.svg" alt="" width="800" height="800" loading="lazy">
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0" id="san-pham-noi-bat">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Bán chạy nhất</span>
+        <h2 class="h2">Sản phẩm nổi bật</h2>
+      </div>
+      <div class="segmented" role="tablist" aria-label="Lọc theo dòng bếp" data-filter-tabs>
+        <button type="button" role="tab" aria-selected="true" data-filter="all">Tất cả</button>
+        <button type="button" role="tab" aria-selected="false" data-filter="don">Bếp đơn</button>
+        <button type="button" role="tab" aria-selected="false" data-filter="doi">Bếp đôi</button>
+      </div>
+    </div>
+    <div class="product-grid" data-filter-grid>
+      <% featured.forEach((p, index) => { %>
+        <div data-line="<%= p.line %>" style="display: contents"><%- include('../partials/product-card', { p, index }) %></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background: var(--surface); border-block: 1px solid var(--border)">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Công nghệ ProChef</span>
+        <h2 class="h2">Mọi chi tiết đều vì bữa cơm nhà bạn</h2>
+        <p class="lead">Không chỉ nóng nhanh — ProChef được thiết kế để nấu ngon, dùng bền và an toàn trong từng lần bật bếp.</p>
+      </div>
+    </div>
+    <div class="bento">
+      <div class="tile hero-tile reveal">
+        <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
+          <circle cx="200" cy="200" r="190" fill="none" stroke="#ff6a1a" stroke-opacity=".35" stroke-width="2"/>
+          <circle cx="200" cy="200" r="150" fill="none" stroke="#ff6a1a" stroke-opacity=".25" stroke-width="2"/>
+          <circle cx="200" cy="200" r="110" fill="none" stroke="#ff6a1a" stroke-opacity=".18" stroke-width="2"/>
+          <circle cx="200" cy="200" r="70" fill="none" stroke="#ff6a1a" stroke-opacity=".12" stroke-width="2"/>
+        </svg>
+        <span class="ico"><%- icon('gauge', { size: 24 }) %></span>
+        <div class="big-num">30<small>%</small></div>
+        <h3>Inverter — lửa nhỏ thật sự nhỏ</h3>
+        <p>Thay vì bật – tắt liên tục như bếp từ thường, mạch Inverter điều chỉnh công suất mượt mà. Nồi nước dùng liu riu cả buổi, món kho không cháy đáy, hóa đơn điện giảm đến 30%.</p>
+      </div>
+      <div class="tile reveal" style="--d: 80ms"><span class="ico"><%- icon('zap') %></span><h3>Booster đun sôi siêu tốc</h3><p>2 lít nước sôi trong khoảng 5 phút — nhanh gấp đôi bếp gas.</p></div>
+      <div class="tile reveal" style="--d: 160ms"><span class="ico"><%- icon('lock') %></span><h3>Khóa trẻ em</h3><p>Chạm giữ 3 giây để khóa bảng điều khiển — bé nghịch cũng không bật được.</p></div>
+      <div class="tile reveal"><span class="ico"><%- icon('thermometer') %></span><h3>Cảnh báo mặt bếp nóng</h3><p>Biểu tượng “H” sáng cho đến khi mặt kính nguội hẳn.</p></div>
+      <div class="tile reveal" style="--d: 80ms"><span class="ico"><%- icon('droplets') %></span><h3>Cảm biến chống trào</h3><p>Tự hạ công suất khi nước tràn lên mặt kính, tránh cháy nồi.</p></div>
+      <div class="tile accent-tile reveal" style="--d: 160ms"><span class="ico"><%- icon('sparkles') %></span><h3>Lau sạch trong 10 giây</h3><p>Mặt kính ceramic phẳng tuyệt đối — không khe, không chân kiềng, không muội than.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Tư vấn nhanh</span>
+        <h2 class="h2">Bếp đơn hay bếp đôi?</h2>
+      </div>
+    </div>
+    <div class="guide">
+      <div class="guide-card reveal">
+        <div class="head"><h3 class="h3">Bếp từ đơn phù hợp nếu bạn…</h3><span class="chip">Từ <%= fmt.money(ranges.don.min) %></span></div>
+        <ul>
+          <li><%- icon('check', { size: 18 }) %>Ở căn hộ nhỏ, phòng trọ hoặc sống một – hai người</li>
+          <li><%- icon('check', { size: 18 }) %>Cần bếp phụ để ăn lẩu, nấu nhanh bên cạnh bếp chính</li>
+          <li><%- icon('check', { size: 18 }) %>Muốn di chuyển, cất gọn khi không dùng</li>
+        </ul>
+        <a class="btn btn-outline" href="/bep-tu-don">Xem bếp từ đơn</a>
+      </div>
+      <div class="guide-card reveal" style="--d: 100ms">
+        <div class="head"><h3 class="h3">Bếp từ đôi phù hợp nếu bạn…</h3><span class="chip">Từ <%= fmt.money(ranges.doi.min) %></span></div>
+        <ul>
+          <li><%- icon('check', { size: 18 }) %>Nấu cơm hằng ngày cho gia đình từ 3 người trở lên</li>
+          <li><%- icon('check', { size: 18 }) %>Muốn nấu canh và xào cùng lúc, lên mâm nóng hổi</li>
+          <li><%- icon('check', { size: 18 }) %>Đang làm tủ bếp mới, cần bếp lắp âm mặt đá</li>
+        </ul>
+        <a class="btn btn-primary" href="/bep-tu-doi">Xem bếp từ đôi</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0">
+  <div class="container">
+    <div class="stats">
+      <div class="stat reveal"><b>2.000+</b><span>gia đình tin dùng</span></div>
+      <div class="stat reveal" style="--d: 80ms"><b>48</b><span>tháng bảo hành tối đa</span></div>
+      <div class="stat reveal" style="--d: 160ms"><b>34</b><span>tỉnh thành giao hàng</span></div>
+      <div class="stat reveal" style="--d: 240ms"><b>4,9★</b><span>đánh giá trung bình</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Khách hàng nói gì</span>
+        <h2 class="h2">Được yêu thích trong hàng nghìn gian bếp</h2>
+      </div>
+    </div>
+    <div class="reviews">
+      <% reviews.forEach((r, i) => { %>
+        <figure class="review reveal" style="--d: <%= i * 80 %>ms; margin: 0">
+          <span class="stars" aria-label="<%= r.rating %> trên 5 sao"><% for (let s = 0; s < r.rating; s++) { %><%- icon('star', { size: 16 }) %><% } %></span>
+          <blockquote>“<%= r.text %>”</blockquote>
+          <footer>
+            <span class="avatar" aria-hidden="true"><%= r.name.split(' ').pop()[0] %></span>
+            <div><b><%= r.name %></b><span><%= r.place %> · <%= r.product %></span></div>
+          </footer>
+        </figure>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0" id="faq">
+  <div class="container faq-wrap">
+    <div class="sticky reveal">
+      <span class="eyebrow">Câu hỏi thường gặp</span>
+      <h2 class="h2">Mọi điều bạn cần biết trước khi mua</h2>
+      <p class="lead">Chưa tìm thấy câu trả lời? Gọi <a class="link" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%= shop.hotline %></a> — tư vấn miễn phí.</p>
+    </div>
+    <div class="faq reveal">
+      <% faqs.forEach((f, i) => { %>
+        <details <%= i === 0 ? 'open' : '' %>>
+          <summary><%= f.q %><%- icon('plus', { size: 20 }) %></summary>
+          <p><%= f.a %></p>
+        </details>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="cta-band reveal">
+    <div>
+      <h2 class="h2">Cần tư vấn chọn bếp?</h2>
+      <p>Kỹ thuật viên ProChef sẽ gợi ý model phù hợp với gian bếp, đường điện và thói quen nấu nướng của gia đình bạn — hoàn toàn miễn phí.</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn-accent btn-lg" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%- icon('phone', { size: 18 }) %> <%= shop.hotline %></a>
+      <% if (shop.zaloUrl) { %><a class="btn btn-outline btn-lg" href="<%= shop.zaloUrl %>" target="_blank" rel="noopener">Chat Zalo</a><% } else { %><a class="btn btn-outline btn-lg" href="/lien-he">Liên hệ</a><% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

@@ -1,0 +1,65 @@
+<%- include('_head') %>
+<div class="admin-top">
+  <div>
+    <a class="link" href="/admin/don-hang" style="font-size: .875rem"><%- icon('chevron-left', { size: 16 }) %> Đơn hàng</a>
+    <h1>Đơn <span class="order-code"><%= order.code %></span></h1>
+  </div>
+  <div class="actions">
+    <a class="btn btn-outline btn-sm" href="tel:<%= order.phone %>"><%- icon('phone', { size: 16 }) %> Gọi khách</a>
+    <a class="btn btn-outline btn-sm" href="/don-hang/<%= order.code %>?t=<%= order.access_token %>" target="_blank" rel="noopener"><%- icon('external', { size: 16 }) %> Trang khách xem</a>
+  </div>
+</div>
+
+<div class="two-col">
+  <div style="display: grid; gap: 20px">
+    <section class="card">
+      <h2>Sản phẩm</h2>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th></th><th>Sản phẩm</th><th class="right">Đơn giá</th><th class="right">SL</th><th class="right">Thành tiền</th></tr></thead>
+        <tbody>
+          <% items.forEach((i) => { %>
+            <tr><td><img src="<%= i.image || '/img/products/placeholder.svg' %>" alt=""></td><td class="wrap"><b><%= i.name %></b><br><span class="muted" style="font-size: .75rem"><%= i.sku %></span></td><td class="right num"><%= fmt.money(i.price) %></td><td class="right"><%= i.qty %></td><td class="right num"><b><%= fmt.money(i.line_total) %></b></td></tr>
+          <% }) %>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="4" class="right">Tạm tính</td><td class="right num"><%= fmt.money(order.subtotal) %></td></tr>
+          <% if (order.discount) { %><tr><td colspan="4" class="right">Giảm giá (<%= order.coupon_code %>)</td><td class="right num">−<%= fmt.money(order.discount) %></td></tr><% } %>
+          <tr><td colspan="4" class="right">Vận chuyển</td><td class="right num"><%= order.shipping_fee ? fmt.money(order.shipping_fee) : 'Miễn phí' %></td></tr>
+          <tr><td colspan="4" class="right"><b>Tổng cộng</b></td><td class="right num"><b><%= fmt.money(order.total) %></b></td></tr>
+        </tfoot>
+      </table></div>
+    </section>
+    <section class="card">
+      <h2>Khách hàng &amp; giao hàng</h2>
+      <dl class="info-list">
+        <div><dt>Họ tên</dt><dd><%= order.customer_name %></dd></div>
+        <div><dt>Điện thoại</dt><dd><%= order.phone %></dd></div>
+        <div><dt>Email</dt><dd><%= order.email || '—' %></dd></div>
+        <div><dt>Địa chỉ</dt><dd><%= order.address %>, <%= order.ward %>, <%= order.province %></dd></div>
+        <div><dt>Ghi chú khách</dt><dd><%= order.note || '—' %></dd></div>
+        <div><dt>Ngày đặt</dt><dd><%= fmt.dateTime(order.created_at) %></dd></div>
+        <% if (order.momo_trans_id) { %><div><dt>Mã GD MoMo</dt><dd><%= order.momo_trans_id %></dd></div><% } %>
+      </dl>
+    </section>
+  </div>
+
+  <form class="card" method="post" action="/admin/don-hang/<%= order.id %>" style="display: grid; gap: 16px">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <h2 style="margin: 0">Xử lý đơn</h2>
+    <div class="field">
+      <label for="status">Trạng thái đơn</label>
+      <select id="status" name="status"><% Object.entries(ORDER_STATUS).forEach(([k, s]) => { %><option value="<%= k %>" <%= order.status === k ? 'selected' : '' %>><%= s.label %></option><% }) %></select>
+      <span class="hint">Hủy đơn sẽ tự động hoàn lại tồn kho.</span>
+    </div>
+    <div class="field">
+      <label for="payment_status">Thanh toán (<%= fmt.PAYMENT_METHOD[order.payment_method] %>)</label>
+      <select id="payment_status" name="payment_status"><% Object.entries(PAYMENT_STATUS).forEach(([k, s]) => { %><option value="<%= k %>" <%= order.payment_status === k ? 'selected' : '' %>><%= s.label %></option><% }) %></select>
+    </div>
+    <div class="field">
+      <label for="admin_note">Ghi chú nội bộ</label>
+      <textarea id="admin_note" name="admin_note" maxlength="1000"><%= order.admin_note || '' %></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Lưu thay đổi</button>
+  </form>
+</div>
+<%- include('_foot') %>

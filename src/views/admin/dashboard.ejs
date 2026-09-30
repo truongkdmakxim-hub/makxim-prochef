@@ -1,0 +1,50 @@
+<%- include('_head') %>
+<div class="admin-top"><h1>Tổng quan</h1><div class="actions"><a class="btn btn-primary btn-sm" href="/admin/don-hang?status=new"><%- icon('orders', { size: 16 }) %> Đơn mới (<%= stats.pending %>)</a></div></div>
+
+<div class="stat-grid">
+  <div class="card stat-card"><span>Doanh thu 30 ngày</span><b><%= fmt.money(stats.revenue) %></b></div>
+  <div class="card stat-card"><span>Đơn hàng 30 ngày</span><b><%= stats.orders %></b></div>
+  <div class="card stat-card"><span>Giá trị đơn trung bình</span><b><%= fmt.money(stats.avg) %></b></div>
+  <div class="card stat-card"><span>Đơn chờ xử lý</span><b style="color: <%= stats.pending ? 'var(--accent)' : 'var(--ink)' %>"><%= stats.pending %></b></div>
+</div>
+
+<div class="two-col">
+  <section class="card">
+    <h2>Đơn hàng gần đây</h2>
+    <% if (!recent.length) { %><p class="muted">Chưa có đơn hàng nào.</p><% } else { %>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Trạng thái</th><th>Thanh toán</th><th class="right">Tổng</th></tr></thead>
+      <tbody>
+        <% recent.forEach((o) => { const s = ORDER_STATUS[o.status]; const ps = PAYMENT_STATUS[o.payment_status]; %>
+          <tr>
+            <td><a class="row-link" href="/admin/don-hang/<%= o.id %>"><%= o.code %></a><br><span class="muted" style="font-size: .75rem"><%= fmt.dateTime(o.created_at) %></span></td>
+            <td><%= o.customer_name %><br><span class="muted" style="font-size: .75rem"><%= o.phone %></span></td>
+            <td><span class="pill tone-<%= s.tone %>"><%= s.label %></span></td>
+            <td><span class="pill tone-<%= ps.tone %>"><%= o.payment_method.toUpperCase() %> · <%= ps.label %></span></td>
+            <td class="right num"><b><%= fmt.money(o.total) %></b></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table></div>
+    <% } %>
+  </section>
+  <div style="display: grid; gap: 20px">
+    <section class="card">
+      <h2>Bán chạy</h2>
+      <% if (!topProducts.length) { %><p class="muted">Chưa có dữ liệu.</p><% } else { %>
+        <table class="table"><tbody>
+          <% topProducts.forEach((t) => { %><tr><td class="wrap"><%= t.name %></td><td class="right"><%= t.qty %> cái</td><td class="right num"><%= fmt.money(t.revenue) %></td></tr><% }) %>
+        </tbody></table>
+      <% } %>
+    </section>
+    <section class="card">
+      <h2>Sắp hết hàng</h2>
+      <% if (!lowStock.length) { %><p class="muted">Tất cả sản phẩm còn đủ hàng.</p><% } else { %>
+        <table class="table"><tbody>
+          <% lowStock.forEach((p) => { %><tr><td class="wrap"><a class="row-link" href="/admin/san-pham/<%= p.id %>"><%= p.name %></a></td><td class="right"><span class="pill <%= p.stock === 0 ? 'tone-danger' : 'tone-warning' %>">Còn <%= p.stock %></span></td></tr><% }) %>
+        </tbody></table>
+      <% } %>
+    </section>
+  </div>
+</div>
+<%- include('_foot') %>

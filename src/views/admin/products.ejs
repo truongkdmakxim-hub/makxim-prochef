@@ -1,0 +1,28 @@
+<%- include('_head') %>
+<div class="admin-top"><h1>Sản phẩm</h1><div class="actions"><a class="btn btn-primary btn-sm" href="/admin/san-pham/moi"><%- icon('plus', { size: 16 }) %> Thêm sản phẩm</a></div></div>
+<section class="card">
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th></th><th>Tên</th><th>Dòng</th><th>SKU</th><th class="right">Giá</th><th class="right">Tồn kho</th><th>Hiển thị</th><th></th></tr></thead>
+    <tbody>
+      <% products.forEach((p) => { %>
+        <tr>
+          <td><img src="<%= p.image %>" alt=""></td>
+          <td class="wrap"><a class="row-link" href="/admin/san-pham/<%= p.id %>"><%= p.name %></a><% if (p.is_featured) { %> <span class="pill tone-accent">Nổi bật</span><% } %></td>
+          <td><%= p.lineLabel %></td>
+          <td><%= p.sku %></td>
+          <td class="right num"><%= fmt.money(p.price) %></td>
+          <td class="right"><span class="pill <%= p.stock === 0 ? 'tone-danger' : p.stock <= 5 ? 'tone-warning' : 'tone-neutral' %>"><%= p.stock %></span></td>
+          <td><span class="pill <%= p.is_active ? 'tone-success' : 'tone-neutral' %>"><%= p.is_active ? 'Đang bán' : 'Đã ẩn' %></span></td>
+          <td class="right">
+            <a class="btn btn-ghost btn-sm" href="/admin/san-pham/<%= p.id %>"><%- icon('pencil', { size: 16 }) %> Sửa</a>
+            <form class="inline-form" method="post" action="/admin/san-pham/<%= p.id %>/an-hien" data-confirm="<%= p.is_active ? 'Ẩn sản phẩm này khỏi cửa hàng?' : 'Hiển thị lại sản phẩm này?' %>">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-ghost btn-sm" type="submit"><%= p.is_active ? 'Ẩn' : 'Hiện' %></button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table></div>
+</section>
+<%- include('_foot') %>
