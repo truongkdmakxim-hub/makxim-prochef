@@ -3,6 +3,8 @@ body.admin { background: var(--surface-2); }
 .admin-shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
 .admin-side { position: sticky; top: 0; height: 100vh; background: var(--ink); color: #d6d3d1; padding: 20px 14px; display: flex; flex-direction: column; gap: 24px; }
 .admin-side .brand { color: #fff; padding: 4px 8px; }
+.admin-side .brand picture { background: #fff; border-radius: 10px; padding: 6px 10px; }
+.admin-side .brand-logo { height: 30px; }
 .admin-side .brand small { color: #a8a29e; }
 .admin-side nav { display: grid; gap: 2px; }
 .admin-side nav a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; font-weight: 500; font-size: 0.9375rem; color: #d6d3d1; transition: background-color 0.15s, color 0.15s; }

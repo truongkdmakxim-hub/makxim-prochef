@@ -13,7 +13,8 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="csrf-token" content="<%= csrfToken %>">
   <title><%= meta.title %> · Quản trị ProChef</title>
-  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
@@ -23,7 +24,7 @@
 <body class="admin">
 <div class="admin-shell">
   <aside class="admin-side">
-    <a class="brand" href="/admin"><%- include('../partials/logo-mark') %><span class="brand-text">ProChef<small>Quản trị</small></span></a>
+    <a class="brand" href="/admin"><%- include('../partials/logo-mark') %><span class="brand-text"><small>Quản trị</small></span></a>
     <nav aria-label="Quản trị">
       <% adminNav.forEach((n) => { %>
         <a href="<%= n.href %>" <%- n.match(adminPath) ? 'aria-current="page"' : '' %>><%- icon(n.icon, { size: 18 }) %><%= n.label %></a>

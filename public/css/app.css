@@ -140,7 +140,10 @@ p { margin: 0; text-wrap: pretty; }
 .site-header.is-scrolled { border-bottom-color: var(--border); background: rgb(250 250 249 / 0.92); }
 .nav { display: flex; align-items: center; gap: 24px; height: var(--header-h); }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.02em; font-size: 1.0625rem; color: var(--ink); }
-.brand-mark { width: 34px; height: 34px; }
+.brand picture { display: block; }
+.brand-logo { height: 40px; width: auto; }
+.site-footer .brand-logo { height: 48px; }
+@media (max-width: 480px) { .brand-logo { height: 34px; } }
 .brand small { display: block; font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--subtle); line-height: 1; margin-top: 2px; }
 .brand-text { line-height: 1.1; }
 .nav-links { display: flex; gap: 4px; margin-left: 12px; }
