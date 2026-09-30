@@ -61,14 +61,14 @@ const config = {
   shop: {
     name: 'Makxim ProChef',
     legalName: env.SHOP_LEGAL_NAME || 'Công ty Makxim',
-    hotline: env.SHOP_HOTLINE || '1900 0000',
+    hotline: env.SHOP_HOTLINE || '1900 599 894',
     email: env.SHOP_EMAIL || 'kinhdoanh@makxim.vn',
     address: env.SHOP_ADDRESS || 'Hà Nội, Việt Nam',
     hours: env.SHOP_HOURS || '8:00 – 21:00, Thứ 2 – Chủ nhật',
     zaloUrl: env.ZALO_URL || '',
     messengerUrl: env.MESSENGER_URL || '',
-    shippingFee: int(env.SHIPPING_FEE, 30000),
-    freeShipFrom: int(env.FREE_SHIP_FROM, 1000000),
+    shippingFee: int(env.SHIPPING_FEE, 100000),
+    freeShipFrom: int(env.FREE_SHIP_FROM, 5000000),
   },
 };
 

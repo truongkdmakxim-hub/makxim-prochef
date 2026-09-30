@@ -1,4 +1,6 @@
 // Nội dung tĩnh (mẫu) — chỉnh sửa trực tiếp tại đây.
+const { shop } = require('./config');
+const { money } = require('./utils/format');
 const faqs = [
   {
     q: 'Bếp từ có dùng được mọi loại nồi không?',
@@ -22,7 +24,7 @@ const faqs = [
   },
   {
     q: 'Tôi có thể thanh toán bằng cách nào?',
-    a: 'Bạn có thể thanh toán khi nhận hàng (COD) hoặc thanh toán trực tuyến qua ví MoMo. Đơn từ 1.000.000₫ được miễn phí vận chuyển toàn quốc.',
+    a: `Bạn có thể thanh toán khi nhận hàng (COD) hoặc thanh toán trực tuyến qua ví MoMo. Đơn từ ${money(shop.freeShipFrom)} được miễn phí vận chuyển toàn quốc.`,
   },
 ];
 
@@ -53,10 +55,10 @@ const pages = {
   },
   'doi-tra-van-chuyen': {
     title: 'Vận chuyển & đổi trả',
-    lead: 'Giao hàng toàn quốc, miễn phí cho đơn từ 1.000.000₫. Kiểm tra hàng trước khi thanh toán.',
+    lead: `Giao hàng toàn quốc, miễn phí cho đơn từ ${money(shop.freeShipFrom)}. Kiểm tra hàng trước khi thanh toán.`,
     sections: [
       { h: 'Thời gian giao hàng', p: ['Nội thành Hà Nội, TP. Hồ Chí Minh: 1–2 ngày. Các tỉnh thành khác: 2–5 ngày làm việc. Nhân viên sẽ gọi xác nhận trước khi giao.'] },
-      { h: 'Phí vận chuyển', p: ['Miễn phí cho đơn từ 1.000.000₫. Đơn dưới mức này phí đồng giá 30.000₫.'] },
+      { h: 'Phí vận chuyển', p: [`Miễn phí cho đơn từ ${money(shop.freeShipFrom)}. Đơn dưới mức này phí đồng giá ${money(shop.shippingFee)}.`] },
       { h: 'Đổi trả', p: ['Bạn được đổi trả trong 7 ngày nếu sản phẩm còn nguyên tem, hộp và phụ kiện, chưa qua sử dụng. Liên hệ hotline để được hướng dẫn.'] },
     ],
   },
