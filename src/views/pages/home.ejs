@@ -25,8 +25,24 @@
       </div>
     </div>
     <div class="hero-visual">
-      <div class="stage">
-        <img src="<%= heroProduct ? heroProduct.images[1] || heroProduct.image : '/img/products/placeholder.svg' %>" alt="<%= heroProduct ? heroProduct.name : 'Bếp từ ProChef' %> đang nấu" width="800" height="800" fetchpriority="high">
+      <%#
+        ẢNH HERO — thay ảnh: đổi 2 đường dẫn /img/hero-cooktop.* bên dưới (nên dùng ảnh nền trong suốt, chỉ có sản phẩm).
+        Hiệu ứng trôi + bóng đổ tự áp dụng cho mọi ảnh.
+        Vòng sáng vùng nấu: --x, --y = tâm vùng nấu (% theo chiều ngang/dọc của ảnh), --size = đường kính (% chiều ngang ảnh).
+        Bếp đơn: xóa bớt 1 dòng burner-glow. Không muốn vòng sáng: xóa cả 2 dòng.
+      %>
+      <div class="stage stage-photo">
+        <div class="hero-product">
+          <div class="hero-float">
+            <picture>
+              <source srcset="/img/hero-cooktop.webp" type="image/webp">
+              <img src="/img/hero-cooktop.png" alt="Bếp từ đôi Makxim ProChef Inverter" width="1400" height="825" fetchpriority="high">
+            </picture>
+            <span class="burner-glow" style="--x: 23.5%; --y: 42.7%; --size: 32%" aria-hidden="true"></span>
+            <span class="burner-glow" style="--x: 76.6%; --y: 42.7%; --size: 32%; --delay: -1.6s" aria-hidden="true"></span>
+          </div>
+          <span class="hero-shadow" aria-hidden="true"></span>
+        </div>
       </div>
       <div class="spec-float f1"><span class="ico"><%- icon('zap', { size: 18 }) %></span><span><b>4400W</b>Booster siêu tốc</span></div>
       <div class="spec-float f2"><span class="ico"><%- icon('leaf', { size: 18 }) %></span><span><b>−30%</b>điện năng tiêu thụ</span></div>
