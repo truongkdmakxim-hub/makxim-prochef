@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: 'Chính sách bảo hành và đổi trả ra sao?',
-    a: 'Bảo hành chính hãng 24–48 tháng tùy model, 1 đổi 1 trong 30 ngày nếu lỗi do nhà sản xuất. Bảo hành tận nhà tại Hà Nội và TP. Hồ Chí Minh.',
+    a: 'Bảo hành chính hãng 12 tháng với bếp từ đơn, 36 tháng với bếp từ đôi, 1 đổi 1 trong 30 ngày nếu lỗi do nhà sản xuất. Bảo hành tận nhà tại Hà Nội và TP. Hồ Chí Minh.',
   },
   {
     q: 'Tôi có thể thanh toán bằng cách nào?',
@@ -46,7 +46,7 @@ const pages = {
   },
   'chinh-sach-bao-hanh': {
     title: 'Chính sách bảo hành',
-    lead: 'Sản phẩm ProChef được bảo hành chính hãng 24–48 tháng tùy model, tính từ ngày giao hàng.',
+    lead: 'Sản phẩm ProChef được bảo hành chính hãng 12 tháng với bếp từ đơn, 36 tháng với bếp từ đôi, tính từ ngày giao hàng.',
     sections: [
       { h: 'Điều kiện bảo hành', p: ['Sản phẩm còn trong thời hạn bảo hành, có mã đơn hàng hoặc tem bảo hành. Lỗi phát sinh do nhà sản xuất trong điều kiện sử dụng bình thường.'] },
       { h: 'Không áp dụng bảo hành', p: ['Mặt kính nứt vỡ do va đập, sản phẩm bị vào nước, cháy nổ do nguồn điện không ổn định, tự ý tháo lắp hoặc sửa chữa tại nơi không được ủy quyền.'] },

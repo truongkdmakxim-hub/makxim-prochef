@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
   res.render('pages/home', {
     meta: {
       title: 'Makxim ProChef — Bếp điện từ đơn & đôi chính hãng',
-      description: 'Bếp điện từ Makxim ProChef: bếp từ đơn, bếp từ đôi Inverter tiết kiệm điện, an toàn cho gia đình. Bảo hành đến 48 tháng, miễn phí giao hàng.',
+      description: 'Bếp điện từ Makxim ProChef: bếp từ đơn, bếp từ đôi Inverter tiết kiệm điện, an toàn cho gia đình. Bảo hành đến 36 tháng, miễn phí giao hàng.',
     },
     featured,
     heroProduct: featured.find((p) => p.slug === 'prochef-d7-inverter') || featured[0],
@@ -38,7 +38,7 @@ async function renderListing(req, res, lineInfo) {
   res.render('pages/products', {
     meta: {
       title: `${title} ProChef — Giá tốt, bảo hành chính hãng`,
-      description: lineInfo?.lead || 'Toàn bộ bếp điện từ đơn và đôi Makxim ProChef. Miễn phí giao hàng, bảo hành đến 48 tháng.',
+      description: lineInfo?.lead || 'Toàn bộ bếp điện từ đơn và đôi Makxim ProChef. Miễn phí giao hàng, bảo hành đến 36 tháng.',
       canonical: `${config.baseUrl}${req.path}`,
     },
     products,

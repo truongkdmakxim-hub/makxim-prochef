@@ -82,7 +82,7 @@
 
       <div class="perks">
         <div><%- icon('truck') %><span><b>Miễn phí giao hàng</b> toàn quốc cho đơn từ <%= fmt.money(shop.freeShipFrom) %></span></div>
-        <div><%- icon('shield') %><span><b>Bảo hành <%= (product.specs.find((s) => s[0] === 'Bảo hành') || [, '24 tháng'])[1] %></b> chính hãng</span></div>
+        <div><%- icon('shield') %><span><b>Bảo hành <%= (product.specs.find((s) => s[0] === 'Bảo hành') || [, product.line === 'doi' ? '36 tháng' : '12 tháng'])[1] %></b> chính hãng</span></div>
         <div><%- icon('rotate') %><span><b>1 đổi 1 trong 30 ngày</b> nếu lỗi nhà sản xuất</span></div>
         <div><%- icon('wallet') %><span>Thanh toán <b>COD</b> hoặc <b>ví MoMo</b></span></div>
       </div>
