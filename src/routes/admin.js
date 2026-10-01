@@ -268,6 +268,15 @@ router.post('/san-pham/:id/an-hien', async (req, res) => {
   res.redirect('/admin/san-pham');
 });
 
+router.post('/san-pham/:id/noi-bat', async (req, res) => {
+  const product = await knex('products').where({ id: req.params.id }).first();
+  if (product) {
+    await knex('products').where({ id: product.id }).update({ is_featured: !product.is_featured, updated_at: knex.fn.now() });
+    flash(req, 'success', `${product.name} đã được ${product.is_featured ? 'bỏ khỏi' : 'thêm vào'} mục nổi bật.`);
+  }
+  res.redirect('/admin/san-pham');
+});
+
 router.post('/san-pham/:id/xoa', async (req, res) => {
   const product = await knex('products').where({ id: req.params.id }).first();
   if (product) {
