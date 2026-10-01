@@ -15,14 +15,29 @@ const router = express.Router();
 
 fs.mkdirSync(config.uploadDir, { recursive: true });
 const IMAGE_TYPES = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/avif': '.avif' };
-const upload = multer({
+const MAX_IMAGE_MB = 10;
+const multerUpload = multer({
   storage: multer.diskStorage({
     destination: config.uploadDir,
     filename: (req, file, cb) => cb(null, `${Date.now().toString(36)}-${crypto.randomBytes(4).toString('hex')}${IMAGE_TYPES[file.mimetype]}`),
   }),
-  limits: { fileSize: 4 * 1024 * 1024, files: 8 },
+  limits: { fileSize: MAX_IMAGE_MB * 1024 * 1024, files: 8 },
   fileFilter: (req, file, cb) => cb(null, Boolean(IMAGE_TYPES[file.mimetype])),
 });
+const UPLOAD_ERRORS = {
+  LIMIT_FILE_SIZE: `Ảnh vượt quá ${MAX_IMAGE_MB}MB. Hãy nén hoặc giảm kích thước ảnh rồi thử lại.`,
+  LIMIT_FILE_COUNT: 'Chỉ tải lên tối đa 8 ảnh mỗi lần.',
+};
+// Turn upload errors (ảnh quá nặng, quá nhiều ảnh) into a readable 400 instead of a generic 500.
+const upload = {
+  array: (field, max) => (req, res, next) => multerUpload.array(field, max)(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      err.status = 400;
+      err.message = UPLOAD_ERRORS[err.code] || 'Không tải được ảnh lên, vui lòng thử lại.';
+    }
+    next(err);
+  }),
+};
 
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false });
 
