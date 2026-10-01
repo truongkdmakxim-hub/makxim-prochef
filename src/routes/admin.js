@@ -268,6 +268,20 @@ router.post('/san-pham/:id/an-hien', async (req, res) => {
   res.redirect('/admin/san-pham');
 });
 
+router.post('/san-pham/:id/xoa', async (req, res) => {
+  const product = await knex('products').where({ id: req.params.id }).first();
+  if (product) {
+    const used = await knex('order_items').where({ product_id: product.id }).first();
+    if (used) {
+      flash(req, 'error', `${product.name} đã có trong đơn hàng nên không thể xóa — hãy dùng "Ẩn".`);
+    } else {
+      await knex('products').where({ id: product.id }).del();
+      flash(req, 'success', `Đã xóa ${product.name}.`);
+    }
+  }
+  res.redirect('/admin/san-pham');
+});
+
 /* ---------- Coupons ---------- */
 
 router.get('/ma-giam-gia', async (req, res) => {
