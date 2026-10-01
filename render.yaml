@@ -1,0 +1,15 @@
+# Render.com — bản demo xem giao diện (gói Free, dùng SQLite, dữ liệu reset khi khởi động lại)
+services:
+  - type: web
+    name: makxim-prochef
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true

@@ -19,7 +19,7 @@ const config = {
   isProd,
   root,
   port: int(env.PORT, 3000),
-  baseUrl: (env.BASE_URL || `http://localhost:${int(env.PORT, 3000)}`).replace(/\/$/, ''),
+  baseUrl: (env.BASE_URL || env.RENDER_EXTERNAL_URL || `http://localhost:${int(env.PORT, 3000)}`).replace(/\/$/, ''),
   sessionSecret: env.SESSION_SECRET || 'dev-only-secret-change-me',
   trustProxy: env.TRUST_PROXY !== 'false',
 
