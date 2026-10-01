@@ -19,10 +19,6 @@
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <button class="btn btn-ghost btn-sm" type="submit"><%= p.is_active ? 'Ẩn' : 'Hiện' %></button>
             </form>
-            <form class="inline-form" method="post" action="/admin/san-pham/<%= p.id %>/noi-bat">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button class="btn btn-ghost btn-sm" type="submit"><%= p.is_featured ? 'Bỏ nổi bật' : 'Nổi bật' %></button>
-            </form>
             <form class="inline-form" method="post" action="/admin/san-pham/<%= p.id %>/xoa" data-confirm="Xóa hẳn <%= p.name %>? Thao tác không thể hoàn tác.">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <button class="btn btn-ghost btn-sm" type="submit" aria-label="Xóa <%= p.name %>"><%- icon('trash', { size: 16 }) %></button>
