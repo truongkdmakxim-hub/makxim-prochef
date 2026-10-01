@@ -186,6 +186,7 @@
   </div>
 </section>
 
+<% if (reviews.length) { %>
 <section class="section" style="padding-top: 0">
   <div class="container">
     <div class="section-head reveal">
@@ -201,13 +202,14 @@
           <blockquote>“<%= r.text %>”</blockquote>
           <footer>
             <span class="avatar" aria-hidden="true"><%= r.name.split(' ').pop()[0] %></span>
-            <div><b><%= r.name %></b><span><%= r.place %> · <%= r.product %></span></div>
+            <div><b><%= r.name %></b><span><%= [r.place, r.product].filter(Boolean).join(' · ') %></span></div>
           </footer>
         </figure>
       <% }) %>
     </div>
   </div>
 </section>
+<% } %>
 
 <section class="section" style="padding-top: 0" id="faq">
   <div class="container faq-wrap">

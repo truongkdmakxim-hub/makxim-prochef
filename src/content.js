@@ -28,12 +28,6 @@ const faqs = [
   },
 ];
 
-const reviews = [
-  { name: 'Chị Thu Hà', place: 'Cầu Giấy, Hà Nội', product: 'ProChef D7 Inverter', rating: 5, text: 'Nồi phở ninh cả buổi sáng lửa vẫn liu riu đều, không phải canh. Mặt kính lau một lần là sạch bóng.' },
-  { name: 'Anh Minh Quân', place: 'Thủ Đức, TP. HCM', product: 'ProChef S3 Inverter', rating: 5, text: 'Mua để ăn lẩu cuối tuần mà giờ dùng hằng ngày. Chế độ Boost đun nước nhanh hơn ấm siêu tốc.' },
-  { name: 'Chị Lan Anh', place: 'Hải Châu, Đà Nẵng', product: 'ProChef D5 Duo', rating: 5, text: 'Giao hàng nhanh, kỹ thuật viên lắp âm gọn gàng. Hai vùng nấu đủ cho bữa cơm nhà 4 người.' },
-];
-
 const pages = {
   'gioi-thieu': {
     title: 'Về Makxim ProChef',
@@ -73,4 +67,4 @@ const pages = {
   },
 };
 
-module.exports = { faqs, reviews, pages };
+module.exports = { faqs, pages };

@@ -1,0 +1,43 @@
+<%- include('_head') %>
+<div class="admin-top"><h1>Đánh giá</h1></div>
+<div class="two-col">
+  <section class="card">
+    <% if (!reviews.length) { %><p class="muted">Chưa có đánh giá.</p><% } else { %>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Khách hàng</th><th>Nhận xét</th><th>Sao</th><th>Thứ tự</th><th>Hiển thị</th><th></th></tr></thead>
+      <tbody>
+        <% reviews.forEach((r) => { %>
+          <tr>
+            <td><b><%= r.name %></b><br><span class="muted" style="font-size: .75rem"><%= [r.place, r.product].filter(Boolean).join(' · ') %></span></td>
+            <td class="wrap"><%= r.text %></td>
+            <td><%= r.rating %>★</td>
+            <td><%= r.sort_order %></td>
+            <td><span class="pill <%= r.is_active ? 'tone-success' : 'tone-neutral' %>"><%= r.is_active ? 'Đang hiện' : 'Đã ẩn' %></span></td>
+            <td class="right">
+              <a class="btn btn-ghost btn-sm" href="/admin/danh-gia/<%= r.id %>"><%- icon('pencil', { size: 16 }) %> Sửa</a>
+              <form class="inline-form" method="post" action="/admin/danh-gia/<%= r.id %>/an-hien"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-ghost btn-sm" type="submit"><%= r.is_active ? 'Ẩn' : 'Hiện' %></button></form>
+              <form class="inline-form" method="post" action="/admin/danh-gia/<%= r.id %>/xoa" data-confirm="Xóa đánh giá của <%= r.name %>? Thao tác không thể hoàn tác."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-ghost btn-sm" type="submit" aria-label="Xóa đánh giá của <%= r.name %>"><%- icon('trash', { size: 16 }) %></button></form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table></div>
+    <% } %>
+  </section>
+
+  <form class="card form-grid" method="post" action="/admin/danh-gia<%= editing ? `/${editing}` : '' %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <h2 class="full" style="margin: 0"><%= editing ? 'Sửa đánh giá' : 'Thêm đánh giá' %></h2>
+    <% if (error) { %><div class="alert alert-error full" role="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div><% } %>
+    <div class="field full"><label for="name">Tên khách hàng</label><input id="name" name="name" maxlength="80" value="<%= values.name || '' %>" required placeholder="VD: Chị Thu Hà"></div>
+    <div class="field"><label for="place">Khu vực</label><input id="place" name="place" maxlength="120" value="<%= values.place || '' %>" placeholder="VD: Cầu Giấy, Hà Nội"></div>
+    <div class="field"><label for="product">Sản phẩm đã mua</label><input id="product" name="product" maxlength="160" value="<%= values.product || '' %>"></div>
+    <div class="field full"><label for="text">Nhận xét</label><textarea id="text" name="text" maxlength="500" required><%= values.text || '' %></textarea></div>
+    <div class="field"><label for="rating">Số sao</label><select id="rating" name="rating"><% [5, 4, 3, 2, 1].forEach((n) => { %><option value="<%= n %>" <%= Number(values.rating || 5) === n ? 'selected' : '' %>><%= n %> sao</option><% }) %></select></div>
+    <div class="field"><label for="sort_order">Thứ tự <span class="opt">(nhỏ hiện trước)</span></label><input id="sort_order" name="sort_order" inputmode="numeric" value="<%= values.sort_order ?? 0 %>"></div>
+    <label class="check full"><input type="checkbox" name="is_active" <%= values.is_active === false ? '' : 'checked' %>> Hiển thị trên trang chủ</label>
+    <button class="btn btn-primary btn-block full" type="submit"><%= editing ? 'Lưu thay đổi' : 'Thêm đánh giá' %></button>
+    <% if (editing) { %><a class="btn btn-outline btn-block full" href="/admin/danh-gia">Hủy</a><% } %>
+  </form>
+</div>
+<%- include('_foot') %>

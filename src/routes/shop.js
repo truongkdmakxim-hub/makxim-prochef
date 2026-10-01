@@ -3,15 +3,16 @@ const config = require('../config');
 const catalog = require('../services/catalog');
 const orders = require('../services/orders');
 const { knex } = require('../db');
-const { faqs, reviews, pages } = require('../content');
+const { faqs, pages } = require('../content');
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const [featured, singleRange, doubleRange] = await Promise.all([
+  const [featured, singleRange, doubleRange, reviews] = await Promise.all([
     catalog.listProducts({ featured: true }),
     catalog.priceRange('don'),
     catalog.priceRange('doi'),
+    knex('reviews').where({ is_active: true }).orderBy([{ column: 'sort_order' }, { column: 'id' }]),
   ]);
   res.render('pages/home', {
     meta: {

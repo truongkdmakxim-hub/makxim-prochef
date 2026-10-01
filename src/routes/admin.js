@@ -297,6 +297,65 @@ router.post('/san-pham/:id/xoa', async (req, res) => {
   res.redirect('/admin/san-pham');
 });
 
+/* ---------- Reviews ---------- */
+
+async function renderReviews(res, { editing = null, values = {}, error = null, status = 200 } = {}) {
+  const reviews = await knex('reviews').orderBy([{ column: 'sort_order' }, { column: 'id' }]);
+  res.status(status).render('admin/reviews', { meta: { title: 'Đánh giá' }, reviews, editing, values, error });
+}
+
+function readReviewForm(body) {
+  const values = {
+    name: String(body.name || '').trim().slice(0, 80),
+    place: String(body.place || '').trim().slice(0, 120) || null,
+    product: String(body.product || '').trim().slice(0, 160) || null,
+    rating: Math.min(5, Math.max(1, parseInt(body.rating, 10) || 5)),
+    text: String(body.text || '').trim().slice(0, 500),
+    sort_order: parseInt(body.sort_order, 10) || 0,
+    is_active: body.is_active === 'on',
+  };
+  const error = !values.name ? 'Nhập tên khách hàng.' : !values.text ? 'Nhập nội dung nhận xét.' : null;
+  return { values, error };
+}
+
+router.get('/danh-gia', (req, res) => renderReviews(res));
+
+router.get('/danh-gia/:id', async (req, res, next) => {
+  const review = await knex('reviews').where({ id: req.params.id }).first();
+  if (!review) return next();
+  return renderReviews(res, { editing: review.id, values: { ...review, is_active: Boolean(review.is_active) } });
+});
+
+router.post('/danh-gia', async (req, res) => {
+  const { values, error } = readReviewForm(req.body);
+  if (error) return renderReviews(res, { values, error, status: 422 });
+  await knex('reviews').insert(values);
+  flash(req, 'success', `Đã thêm đánh giá của ${values.name}.`);
+  res.redirect('/admin/danh-gia');
+});
+
+router.post('/danh-gia/:id', async (req, res, next) => {
+  const review = await knex('reviews').where({ id: req.params.id }).first();
+  if (!review) return next();
+  const { values, error } = readReviewForm(req.body);
+  if (error) return renderReviews(res, { editing: review.id, values, error, status: 422 });
+  await knex('reviews').where({ id: review.id }).update({ ...values, updated_at: knex.fn.now() });
+  flash(req, 'success', `Đã lưu đánh giá của ${values.name}.`);
+  res.redirect('/admin/danh-gia');
+});
+
+router.post('/danh-gia/:id/an-hien', async (req, res) => {
+  const review = await knex('reviews').where({ id: req.params.id }).first();
+  if (review) await knex('reviews').where({ id: review.id }).update({ is_active: !review.is_active, updated_at: knex.fn.now() });
+  res.redirect('/admin/danh-gia');
+});
+
+router.post('/danh-gia/:id/xoa', async (req, res) => {
+  await knex('reviews').where({ id: req.params.id }).del();
+  flash(req, 'success', 'Đã xóa đánh giá.');
+  res.redirect('/admin/danh-gia');
+});
+
 /* ---------- Coupons ---------- */
 
 router.get('/ma-giam-gia', async (req, res) => {
