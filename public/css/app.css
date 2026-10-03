@@ -241,12 +241,14 @@ p { margin: 0; text-wrap: pretty; }
 .line-card .price-from b { color: var(--ink); }
 .line-card img { width: 78%; margin: 8px auto -6%; transition: transform 0.6s var(--ease); }
 .line-card:hover img { transform: scale(1.04); }
+.line-card.photo { min-height: 560px; background: #f1f1f3; border-color: transparent; }
+.line-card.photo img { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; margin: 0; object-fit: cover; object-position: center bottom; }
 .line-card.dark { background: linear-gradient(160deg, #292524, #0c0a09); color: #d6d3d1; border-color: transparent; }
 .line-card.dark h3 { color: #fff; }
 .line-card.dark .price-from { color: #a8a29e; }
 .line-card.dark .price-from b { color: #fff; }
 .line-card.dark .link { color: #fdba74; }
-@media (max-width: 760px) { .lines { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .lines { grid-template-columns: 1fr; } .line-card.photo { min-height: 0; } .line-card.photo .copy { position: relative; z-index: 1; } .line-card.photo img { position: static; height: auto; margin-top: -25%; } }
 
 /* ---------- Segmented tabs ---------- */
 .segmented { display: inline-flex; padding: 4px; gap: 2px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; }
