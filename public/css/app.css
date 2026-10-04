@@ -204,6 +204,10 @@ p { margin: 0; text-wrap: pretty; }
 @keyframes burner { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 .hero-shadow { display: block; width: 88%; height: 22px; margin: 7% auto 0; border-radius: 50%; background: radial-gradient(closest-side, rgb(28 25 23 / 0.3), transparent); animation: hero-shadow 6s ease-in-out infinite; }
 @keyframes hero-shadow { 50% { transform: scaleX(0.86); opacity: 0.65; } }
+/* Scene hero: full-bleed lifestyle photo with a slow push-in */
+.hero-visual .stage-scene { border-color: transparent; box-shadow: var(--shadow-lg); }
+.hero-visual .stage-scene img { object-fit: cover; transform-origin: 55% 55%; animation: scene-zoom 18s ease-in-out infinite alternate; }
+@keyframes scene-zoom { from { transform: scale(1); } to { transform: scale(1.06); } }
 .spec-float { position: absolute; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgb(255 255 255 / 0.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgb(255 255 255 / 0.9); border-radius: 14px; box-shadow: var(--shadow); font-size: 0.8125rem; line-height: 1.25; }
 .spec-float b { display: block; font-size: 1rem; color: var(--ink); }
 .spec-float .ico { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
@@ -215,7 +219,7 @@ p { margin: 0; text-wrap: pretty; }
   .hero-visual { max-width: 560px; width: 100%; margin-inline: auto; }
   .spec-float.f1 { left: 8px; } .spec-float.f2 { right: 8px; }
 }
-@media (max-width: 480px) { .spec-float.f3 { display: none; } }
+@media (max-width: 480px) { .spec-float.f3 { display: none; } .spec-float.f2 { bottom: 4%; } }
 
 /* ---------- Trust bar ---------- */
 .trust { border-block: 1px solid var(--border); background: var(--surface); }
