@@ -30,7 +30,12 @@
         Chừa trống góc trên trái và 2 góc dưới cho 3 thẻ thông số. Ảnh cũ (sản phẩm nền trong suốt) vẫn ở /img/hero-cooktop.*
       %>
       <div class="stage stage-scene">
-        <img src="/img/hero-scene.webp" alt="Bếp từ đôi Makxim ProChef Inverter lắp âm trên mặt bếp đá cẩm thạch" width="1400" height="1400" fetchpriority="high">
+        <div class="scene">
+          <img src="/img/hero-scene.webp" alt="Bếp từ đôi Makxim ProChef Inverter lắp âm trên mặt bếp đá cẩm thạch" width="1400" height="1400" fetchpriority="high">
+          <%# Vòng sáng vùng nấu (đo theo vòng nét đứt trong ảnh): --x, --y = tâm; --w, --h = 2 trục elip (% ảnh); --r = góc xoay. Đổi ảnh thì phải đo lại. %>
+          <span class="scene-glow" style="--x: 33.83%; --y: 60.98%; --w: 18.51%; --h: 14.4%; --r: -13.2deg" aria-hidden="true"></span>
+          <span class="scene-glow" style="--x: 58.46%; --y: 44.93%; --w: 17.53%; --h: 13.47%; --r: -7.1deg; --delay: -1.6s" aria-hidden="true"></span>
+        </div>
       </div>
       <div class="spec-float f1"><span class="ico"><%- icon('zap', { size: 18 }) %></span><span><b>4400W</b>Booster siêu tốc</span></div>
       <div class="spec-float f2"><span class="ico"><%- icon('leaf', { size: 18 }) %></span><span><b>−30%</b>điện năng tiêu thụ</span></div>

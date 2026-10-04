@@ -206,7 +206,15 @@ p { margin: 0; text-wrap: pretty; }
 @keyframes hero-shadow { 50% { transform: scaleX(0.86); opacity: 0.65; } }
 /* Scene hero: full-bleed lifestyle photo with a slow push-in */
 .hero-visual .stage-scene { border-color: transparent; box-shadow: var(--shadow-lg); }
-.hero-visual .stage-scene img { object-fit: cover; transform-origin: 55% 55%; animation: scene-zoom 18s ease-in-out infinite alternate; }
+.hero-visual .stage-scene .scene { position: absolute; inset: 0; transform-origin: 50% 55%; animation: scene-zoom 18s ease-in-out infinite alternate; }
+.hero-visual .stage-scene img { object-fit: cover; animation: none; }
+.scene-glow {
+  position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h);
+  transform: translate(-50%, -50%) rotate(var(--r)); border-radius: 50%; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(closest-side, transparent 72%, rgb(255 106 26 / 0.3) 83%, rgb(255 122 46 / 0.95) 93%, rgb(255 61 0 / 0.45) 98%, transparent 100%);
+  box-shadow: 0 0 22px 2px rgb(255 106 26 / 0.35);
+  animation: burner 3.2s ease-in-out infinite; animation-delay: var(--delay, 0s);
+}
 @keyframes scene-zoom { from { transform: scale(1); } to { transform: scale(1.06); } }
 .spec-float { position: absolute; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgb(255 255 255 / 0.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgb(255 255 255 / 0.9); border-radius: 14px; box-shadow: var(--shadow); font-size: 0.8125rem; line-height: 1.25; }
 .spec-float b { display: block; font-size: 1rem; color: var(--ink); }
