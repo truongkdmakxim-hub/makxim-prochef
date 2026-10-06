@@ -221,13 +221,12 @@ p { margin: 0; text-wrap: pretty; }
 .spec-float .ico { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
 .spec-float.f1 { top: 8%; left: -4%; }
 .spec-float.f2 { bottom: 12%; right: -3%; }
-.spec-float.f3 { bottom: 4%; left: 6%; }
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-visual { max-width: 560px; width: 100%; margin-inline: auto; }
   .spec-float.f1 { left: 8px; } .spec-float.f2 { right: 8px; }
 }
-@media (max-width: 480px) { .spec-float.f3 { display: none; } .spec-float.f2 { bottom: 4%; } }
+@media (max-width: 480px) { .spec-float.f2 { bottom: 4%; } }
 
 /* ---------- Trust bar ---------- */
 .trust { position: relative; margin-top: clamp(-40px, -3vw, -16px); padding-bottom: clamp(16px, 3vw, 32px); z-index: 2; }
