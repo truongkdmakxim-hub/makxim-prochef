@@ -321,10 +321,22 @@ p { margin: 0; text-wrap: pretty; }
 .tile .big-num span { margin-top: 6px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .inv-copy { display: grid; grid-template-columns: auto 1fr; gap: clamp(20px, 3vw, 36px); align-items: end; }
 
-/* Inverter chart */
-.inv-chart { position: relative; margin: 0; padding: 18px 18px 14px; border-radius: var(--radius); background: rgb(255 255 255 / 0.85); border: 1px solid var(--border); box-shadow: 0 18px 40px -24px rgb(194 65 12 / 0.45); }
-.inv-chart svg { display: block; width: 100%; height: clamp(150px, 18vw, 210px); overflow: visible; }
-.inv-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 12px; font-size: 0.8125rem; font-weight: 600; color: var(--text-2); }
+/* Inverter stage: tilted ProChef cooktop + floating chart card */
+.inv-stage { position: relative; min-height: clamp(300px, 30vw, 380px); }
+.inv-cooktop { position: absolute; left: 3%; top: 4%; width: 74%; perspective: 1400px; }
+.inv-glass { position: relative; transform: rotateX(48deg) rotateZ(-10deg); transform-origin: 50% 60%; border-radius: 3%; filter: drop-shadow(0 30px 24px rgb(28 25 23 / 0.32)); }
+.inv-glass img { display: block; width: 100%; height: auto; border-radius: 2.4%; }
+.inv-glass::after { content: ''; position: absolute; inset: 0; border-radius: 2.4%; background: linear-gradient(115deg, rgb(255 255 255 / 0.18) 0%, transparent 30%, transparent 70%, rgb(255 255 255 / 0.06)); pointer-events: none; }
+.inv-zone { position: absolute; top: 42.8%; width: 34%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; }
+.inv-zone.z-left { left: 23.2%; background: radial-gradient(closest-side, transparent 72%, rgb(255 106 26 / 0.95) 82%, rgb(255 60 0 / 0.55) 88%, transparent 100%), radial-gradient(closest-side, rgb(255 90 20 / 0.28), transparent 75%); box-shadow: 0 0 40px 6px rgb(255 106 26 / 0.35); animation: inv-breathe 3.2s ease-in-out infinite; }
+.inv-zone.z-right { left: 76.6%; background: radial-gradient(closest-side, transparent 74%, rgb(255 106 26 / 0.35) 84%, transparent 96%); opacity: 0.55; }
+@keyframes inv-breathe { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+.inv-shadow { display: block; width: 80%; height: 26px; margin: -6% auto 0; border-radius: 50%; background: radial-gradient(closest-side, rgb(28 25 23 / 0.18), transparent); }
+.inv-badge { position: absolute; left: 2%; top: 0; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgb(255 255 255 / 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid #fed7aa; font-size: 0.75rem; font-weight: 700; color: var(--accent-hover); box-shadow: var(--shadow-sm); }
+.inv-badge i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-glow); box-shadow: 0 0 0 4px rgb(255 106 26 / 0.2); animation: inv-breathe 1.6s ease-in-out infinite; }
+.inv-chart { position: absolute; right: 0; bottom: 0; width: min(56%, 400px); margin: 0; padding: 14px 14px 10px; border-radius: var(--radius); background: rgb(255 255 255 / 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgb(255 255 255 / 0.9); box-shadow: 0 24px 48px -20px rgb(194 65 12 / 0.45), 0 0 0 1px var(--border); }
+.inv-chart svg { display: block; width: 100%; height: clamp(96px, 10vw, 130px); overflow: visible; }
+.inv-legend { display: grid; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: 600; color: var(--text-2); }
 .inv-key { display: inline-flex; align-items: center; gap: 8px; }
 .inv-key i { width: 18px; height: 3px; border-radius: 2px; }
 .inv-key.on-off i { background: repeating-linear-gradient(90deg, #a8a29e 0 4px, transparent 4px 7px); }
@@ -344,7 +356,7 @@ p { margin: 0; text-wrap: pretty; }
 .inv-tag.t-max { top: calc(18% - 28px); }
 .inv-tag.t-low { top: calc(67% - 30px); color: var(--accent-hover); background: var(--accent-soft); border-color: #fed7aa; }
 .inv-tag.t-off { top: calc(91% - 11px); }
-@media (prefers-reduced-motion: reduce) { .inv-onoff, .inv-line { stroke-dashoffset: 0; animation: none !important; } .inv-area { opacity: 1; animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .inv-zone, .inv-badge i { animation: none; } .inv-onoff, .inv-line { stroke-dashoffset: 0; animation: none !important; } .inv-area { opacity: 1; animation: none !important; } }
 .no-js .inv-onoff, .no-js .inv-line { stroke-dashoffset: 0; } .no-js .inv-area { opacity: 1; }
 .tile.accent-tile { background: var(--accent-soft); border-color: #fed7aa; }
 .tile.accent-tile .ico { background: #fff; color: var(--accent); }
@@ -357,6 +369,9 @@ p { margin: 0; text-wrap: pretty; }
   .tile.hero-tile { grid-column: auto; }
   .inv-copy { grid-template-columns: 1fr; gap: 12px; }
   .inv-tag.t-off { display: none; }
+  .inv-stage { min-height: 0; display: grid; gap: 12px; }
+  .inv-cooktop { position: relative; left: 0; width: 92%; margin: 28px auto 0; }
+  .inv-chart { position: relative; width: 100%; margin-top: -18%; }
 }
 
 /* ---------- Guide (don vs doi) ---------- */
