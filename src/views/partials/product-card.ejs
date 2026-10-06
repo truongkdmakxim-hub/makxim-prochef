@@ -1,4 +1,4 @@
-<article class="product-card reveal" style="--d: <%= (typeof index !== 'undefined' ? index % 3 : 0) * 80 %>ms">
+<article class="product-card reveal" data-price="<%= p.price %>" data-order="<%= p.sort_order %>" data-id="<%= p.id %>" style="--d: <%= (typeof index !== 'undefined' ? index % 3 : 0) * 80 %>ms">
   <a class="media" href="/san-pham/<%= p.slug %>" tabindex="-1" aria-hidden="true">
     <img src="<%= p.image %>" alt="" width="800" height="800" loading="lazy" decoding="async">
     <% if (p.images[1]) { %><img class="alt" src="<%= p.images[1] %>" alt="" width="800" height="800" loading="lazy" decoding="async"><% } %>

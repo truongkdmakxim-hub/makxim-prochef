@@ -23,7 +23,7 @@
   <meta property="og:description" content="<%= description %>">
   <meta property="og:locale" content="vi_VN">
   <meta name="theme-color" content="#fafaf9">
-  <meta name="csrf-token" content="<%= csrfToken %>">
+  <% if (staticMode) { %><meta name="order-endpoint" content="<%= orderEndpoint %>"><% } else { %><meta name="csrf-token" content="<%= csrfToken %>"><% } %>
   <link rel="icon" href="/img/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
   <link rel="stylesheet" href="/css/app.css?v=<%= assetVersion %>">
   <% if (typeof jsonLd !== 'undefined' && jsonLd) { %><script type="application/ld+json"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script><% } %>
 </head>
-<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>"<% if (staticMode) { %> data-static data-ship-fee="<%= shop.shippingFee %>" data-free-ship="<%= shop.freeShipFrom %>"<% } %>>
 <a class="skip-link" href="#main">Bỏ qua đến nội dung</a>
 
 <div class="announce">
@@ -80,7 +80,7 @@
     <nav aria-label="Menu di động">
       <a href="/san-pham">Tất cả sản phẩm <%- icon('chevron-right', { size: 18 }) %></a>
       <% nav.forEach((item) => { %><a href="<%= item.href %>"><%= item.label %> <%- icon('chevron-right', { size: 18 }) %></a><% }) %>
-      <a href="/tra-cuu-don-hang">Tra cứu đơn hàng <%- icon('chevron-right', { size: 18 }) %></a>
+      <% if (!staticMode) { %><a href="/tra-cuu-don-hang">Tra cứu đơn hàng <%- icon('chevron-right', { size: 18 }) %></a><% } %>
     </nav>
     <a class="btn btn-primary btn-lg" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%- icon('phone', { size: 18 }) %> Gọi <%= shop.hotline %></a>
   </div>

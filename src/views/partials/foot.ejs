@@ -19,7 +19,7 @@
       <div>
         <h3>Hỗ trợ khách hàng</h3>
         <ul>
-          <li><a href="/tra-cuu-don-hang">Tra cứu đơn hàng</a></li>
+          <% if (!staticMode) { %><li><a href="/tra-cuu-don-hang">Tra cứu đơn hàng</a></li><% } %>
           <li><a href="/chinh-sach/chinh-sach-bao-hanh">Chính sách bảo hành</a></li>
           <li><a href="/chinh-sach/doi-tra-van-chuyen">Vận chuyển &amp; đổi trả</a></li>
           <li><a href="/chinh-sach/thanh-toan">Hướng dẫn thanh toán</a></li>
@@ -37,7 +37,7 @@
     </div>
     <div class="footer-bottom">
       <span>© <%= new Date().getFullYear() %> <%= shop.legalName %>. Makxim ProChef là thương hiệu của Makxim Group.</span>
-      <div class="pay-logos" aria-label="Phương thức thanh toán"><span>COD</span><span class="momo">MoMo</span></div>
+      <div class="pay-logos" aria-label="Phương thức thanh toán"><span>COD</span><% if (!staticMode) { %><span class="momo">MoMo</span><% } %></div>
     </div>
   </div>
 </footer>

@@ -1,5 +1,5 @@
 // Nội dung tĩnh (mẫu) — chỉnh sửa trực tiếp tại đây.
-const { shop } = require('./config');
+const { shop, staticMode } = require('./config');
 const { money } = require('./utils/format');
 const faqs = [
   {
@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: 'Tôi có thể thanh toán bằng cách nào?',
-    a: `Bạn có thể thanh toán khi nhận hàng (COD) hoặc thanh toán trực tuyến qua ví MoMo. Đơn từ ${money(shop.freeShipFrom)} được miễn phí vận chuyển toàn quốc.`,
+    a: `${staticMode ? 'Bạn thanh toán khi nhận hàng (COD) — tiền mặt hoặc chuyển khoản sau khi kiểm tra sản phẩm.' : 'Bạn có thể thanh toán khi nhận hàng (COD) hoặc thanh toán trực tuyến qua ví MoMo.'} Đơn từ ${money(shop.freeShipFrom)} được miễn phí vận chuyển toàn quốc.`,
   },
 ];
 
@@ -56,15 +56,24 @@ const pages = {
       { h: 'Đổi trả', p: ['Bạn được đổi trả trong 7 ngày nếu sản phẩm còn nguyên tem, hộp và phụ kiện, chưa qua sử dụng. Liên hệ hotline để được hướng dẫn.'] },
     ],
   },
-  'thanh-toan': {
-    title: 'Hướng dẫn thanh toán',
-    lead: 'Makxim ProChef hỗ trợ thanh toán khi nhận hàng và thanh toán trực tuyến qua ví MoMo.',
-    sections: [
-      { h: 'Thanh toán khi nhận hàng (COD)', p: ['Bạn thanh toán tiền mặt hoặc chuyển khoản cho nhân viên giao hàng sau khi kiểm tra sản phẩm.'] },
-      { h: 'Ví MoMo', p: ['Chọn MoMo ở bước thanh toán, bạn sẽ được chuyển sang cổng MoMo để quét mã QR hoặc xác nhận trên ứng dụng. Đơn hàng được xác nhận tự động ngay khi thanh toán thành công.'] },
-      { h: 'Bảo mật', p: ['Makxim không lưu trữ thông tin thẻ hay tài khoản ví của bạn. Mọi giao dịch trực tuyến được xử lý trên cổng thanh toán của MoMo.'] },
-    ],
-  },
+  'thanh-toan': staticMode
+    ? {
+        title: 'Hướng dẫn thanh toán',
+        lead: 'Makxim ProChef hỗ trợ thanh toán khi nhận hàng (COD) trên toàn quốc.',
+        sections: [
+          { h: 'Thanh toán khi nhận hàng (COD)', p: ['Sau khi bạn đặt hàng, nhân viên Makxim sẽ gọi điện xác nhận đơn. Bạn thanh toán tiền mặt hoặc chuyển khoản cho nhân viên giao hàng sau khi kiểm tra sản phẩm.'] },
+          { h: 'Chuyển khoản trước', p: ['Nếu muốn chuyển khoản trước, vui lòng liên hệ hotline hoặc Zalo để nhận thông tin tài khoản công ty. Makxim không yêu cầu chuyển khoản vào tài khoản cá nhân.'] },
+        ],
+      }
+    : {
+        title: 'Hướng dẫn thanh toán',
+        lead: 'Makxim ProChef hỗ trợ thanh toán khi nhận hàng và thanh toán trực tuyến qua ví MoMo.',
+        sections: [
+          { h: 'Thanh toán khi nhận hàng (COD)', p: ['Bạn thanh toán tiền mặt hoặc chuyển khoản cho nhân viên giao hàng sau khi kiểm tra sản phẩm.'] },
+          { h: 'Ví MoMo', p: ['Chọn MoMo ở bước thanh toán, bạn sẽ được chuyển sang cổng MoMo để quét mã QR hoặc xác nhận trên ứng dụng. Đơn hàng được xác nhận tự động ngay khi thanh toán thành công.'] },
+          { h: 'Bảo mật', p: ['Makxim không lưu trữ thông tin thẻ hay tài khoản ví của bạn. Mọi giao dịch trực tuyến được xử lý trên cổng thanh toán của MoMo.'] },
+        ],
+      },
 };
 
 module.exports = { faqs, pages };

@@ -33,6 +33,10 @@ const config = {
     filename: env.DB_FILE || path.join(root, 'data', 'prochef.sqlite'),
   },
 
+  // Static export for GitHub Pages (scripts/build-static.js): cart lives in localStorage, orders go to a Google Sheet.
+  staticMode: env.STATIC_SITE === '1',
+  orderEndpoint: env.ORDER_ENDPOINT || '',
+
   uploadDir: env.UPLOAD_DIR || path.join(root, 'public', 'uploads'),
 
   admin: {

@@ -9,7 +9,9 @@
     "dev": "node --watch server.js",
     "migrate": "node scripts/migrate.js",
     "images": "node scripts/generate-images.js",
-    "hash-password": "node scripts/hash-password.js"
+    "hash-password": "node scripts/hash-password.js",
+    "build:static": "node scripts/build-static.js",
+    "deploy:static": "node scripts/build-static.js && node scripts/deploy-static.js"
   },
   "engines": {
     "node": ">=20"

@@ -4,8 +4,23 @@ const catalog = require('../services/catalog');
 const orders = require('../services/orders');
 const { knex } = require('../db');
 const { faqs, pages } = require('../content');
+const { PROVINCES } = require('../utils/format');
 
 const router = express.Router();
+
+// Static export: cart + checkout run in the browser (public/js/app.js) and these routes shadow the session-based ones.
+if (config.staticMode) {
+  router.get('/gio-hang', (req, res) => {
+    res.render('pages/static-cart', { meta: { title: 'Giỏ hàng', robots: 'noindex' } });
+  });
+  router.get('/thanh-toan', (req, res) => {
+    res.render('pages/static-checkout', { meta: { title: 'Đặt hàng', robots: 'noindex' }, provinces: PROVINCES });
+  });
+  router.get('/products.json', async (req, res) => {
+    const products = await catalog.listProducts();
+    res.json(products.map((p) => ({ id: p.id, slug: p.slug, name: p.name, line: p.lineLabel, price: p.price, image: p.image, stock: p.stock })));
+  });
+}
 
 router.get('/', async (req, res) => {
   const [featured, singleRange, doubleRange, reviews] = await Promise.all([

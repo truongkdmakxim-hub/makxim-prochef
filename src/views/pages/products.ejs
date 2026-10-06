@@ -18,7 +18,7 @@
     <nav class="segmented" aria-label="Dòng sản phẩm">
       <% tabs.forEach((t) => { %><a href="<%= t.href %>" <%- activeLine === t.key ? 'aria-current="page"' : '' %>><%= t.label %></a><% }) %>
     </nav>
-    <form method="get" data-autosubmit>
+    <form method="get" <%- staticMode ? 'data-static-sort' : 'data-autosubmit' %>>
       <label class="visually-hidden" for="sort">Sắp xếp</label>
       <select class="select" id="sort" name="sort">
         <% Object.entries(sorts).forEach(([k, v]) => { %><option value="<%= k %>" <%= sort === k ? 'selected' : '' %>><%= v %></option><% }) %>
@@ -29,7 +29,7 @@
 
   <p class="muted" style="margin-bottom: 20px; font-size: .9375rem"><%= products.length %> sản phẩm</p>
   <% if (products.length) { %>
-    <div class="product-grid">
+    <div class="product-grid" data-sort-grid>
       <% products.forEach((p, index) => { %><%- include('../partials/product-card', { p, index }) %><% }) %>
     </div>
   <% } else { %>

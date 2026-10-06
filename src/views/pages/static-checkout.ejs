@@ -1,0 +1,95 @@
+<%- include('../partials/head') %>
+<div class="container" data-static-checkout>
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/gio-hang">Giỏ hàng</a><%- icon('chevron-right') %><span aria-current="page">Đặt hàng</span></nav>
+    <h1 class="h1">Đặt hàng</h1>
+  </header>
+
+  <div class="empty-state" data-cart-empty hidden>
+    <span class="ico"><%- icon('bag', { size: 28 }) %></span>
+    <h2 class="h3">Giỏ hàng đang trống</h2>
+    <p>Hãy chọn sản phẩm trước khi đặt hàng.</p>
+    <a class="btn btn-primary" href="/san-pham">Xem sản phẩm</a>
+  </div>
+
+  <div class="empty-state" data-order-done hidden tabindex="-1">
+    <span class="ico" style="color: var(--success)"><%- icon('circle-check', { size: 28 }) %></span>
+    <h2 class="h3">Đặt hàng thành công!</h2>
+    <p>Mã đơn của bạn: <b data-order-code></b>. Nhân viên Makxim sẽ gọi điện xác nhận trong giờ làm việc (<%= shop.hours %>).</p>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center">
+      <a class="btn btn-primary" href="/">Về trang chủ</a>
+      <a class="btn btn-outline" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%- icon('phone', { size: 18 }) %> <%= shop.hotline %></a>
+    </div>
+  </div>
+
+  <div class="alert alert-error" role="alert" style="margin-bottom: 20px" data-form-error hidden tabindex="-1"><%- icon('alert', { size: 18 }) %><span></span></div>
+
+  <form class="checkout-layout" novalidate data-static-order hidden>
+    <div class="checkout-main">
+      <section class="form-card">
+        <h2><span class="step">1</span> Thông tin người nhận</h2>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="customer_name">Họ và tên</label>
+            <input id="customer_name" name="customer_name" autocomplete="name" required minlength="2">
+          </div>
+          <div class="field">
+            <label for="phone">Số điện thoại</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="0912 345 678">
+          </div>
+          <div class="field">
+            <label for="email">Email <span class="opt">(không bắt buộc)</span></label>
+            <input id="email" name="email" type="email" autocomplete="email">
+          </div>
+        </div>
+      </section>
+
+      <section class="form-card">
+        <h2><span class="step">2</span> Địa chỉ giao hàng</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="province">Tỉnh / Thành phố</label>
+            <select id="province" name="province" required autocomplete="address-level1">
+              <option value="">Chọn tỉnh/thành</option>
+              <% provinces.forEach((p) => { %><option><%= p %></option><% }) %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ward">Phường / Xã</label>
+            <input id="ward" name="ward" required autocomplete="address-level2">
+          </div>
+          <div class="field full">
+            <label for="address">Số nhà, tên đường</label>
+            <input id="address" name="address" required autocomplete="street-address">
+          </div>
+          <div class="field full">
+            <label for="note">Ghi chú <span class="opt">(không bắt buộc)</span></label>
+            <textarea id="note" name="note" maxlength="500" placeholder="VD: Giao giờ hành chính, cần lắp đặt bếp âm…"></textarea>
+          </div>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px">
+        </div>
+      </section>
+
+      <section class="form-card">
+        <h2><span class="step">3</span> Phương thức thanh toán</h2>
+        <div class="pay-options" role="radiogroup" aria-label="Phương thức thanh toán">
+          <label class="pay-option">
+            <input type="radio" name="payment_method" value="cod" checked>
+            <span class="radio" aria-hidden="true"></span>
+            <span style="display: flex; gap: 14px; align-items: center"><span class="logo"><%- icon('banknote', { size: 22 }) %></span><span><b>Thanh toán khi nhận hàng (COD)</b><span>Kiểm tra hàng rồi mới thanh toán</span></span></span>
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <aside class="summary">
+      <h2 data-order-count>Đơn hàng</h2>
+      <div class="summary-items" data-order-items></div>
+      <div data-cart-totals></div>
+      <button class="btn btn-accent btn-lg btn-block" type="submit" data-submit>Đặt hàng</button>
+      <p class="secure-note"><%- icon('lock', { size: 14 }) %> Thông tin của bạn được bảo mật</p>
+      <p class="muted" style="font-size: .8125rem; text-align: center">Bằng việc đặt hàng, bạn đồng ý với <a class="link" href="/chinh-sach/doi-tra-van-chuyen">chính sách vận chuyển &amp; đổi trả</a>.</p>
+    </aside>
+  </form>
+</div>
+<%- include('../partials/foot') %>

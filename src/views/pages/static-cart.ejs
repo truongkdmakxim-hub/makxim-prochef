@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+<div class="container" data-static-cart>
+  <header class="page-head">
+    <h1 class="h1">Giỏ hàng</h1>
+    <p class="muted" data-cart-summary-count hidden></p>
+  </header>
+
+  <div class="empty-state" data-cart-empty hidden>
+    <span class="ico"><%- icon('bag', { size: 28 }) %></span>
+    <h2 class="h3">Giỏ hàng đang trống</h2>
+    <p>Khám phá các mẫu bếp từ ProChef và chọn chiếc phù hợp với gian bếp của bạn.</p>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center">
+      <a class="btn btn-primary" href="/bep-tu-doi">Bếp từ đôi</a>
+      <a class="btn btn-outline" href="/bep-tu-don">Bếp từ đơn</a>
+    </div>
+  </div>
+
+  <div class="cart-layout" data-cart-full hidden>
+    <div class="cart-list" data-cart-list></div>
+    <aside class="summary">
+      <h2>Tóm tắt đơn hàng</h2>
+      <div data-cart-totals></div>
+      <a class="btn btn-accent btn-lg btn-block" href="/thanh-toan">Tiến hành đặt hàng <%- icon('arrow-right', { size: 18 }) %></a>
+      <a class="btn btn-ghost btn-block" href="/san-pham">Tiếp tục mua sắm</a>
+      <p class="secure-note"><%- icon('lock', { size: 14 }) %> Thanh toán khi nhận hàng (COD)</p>
+    </aside>
+  </div>
+  <noscript><div class="alert alert-info"><%- icon('info', { size: 18 }) %><span>Vui lòng bật JavaScript hoặc gọi <a class="link" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%= shop.hotline %></a> để đặt hàng.</span></div></noscript>
+</div>
+<template data-icon-minus><%- icon('minus', { size: 16 }) %></template>
+<template data-icon-plus><%- icon('plus', { size: 16 }) %></template>
+<template data-icon-trash><%- icon('trash', { size: 18 }) %></template>
+<%- include('../partials/foot') %>
