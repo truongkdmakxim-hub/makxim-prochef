@@ -119,16 +119,43 @@
     </div>
     <div class="bento">
       <div class="tile hero-tile reveal">
-        <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
-          <circle cx="200" cy="200" r="190" fill="none" stroke="#ff6a1a" stroke-opacity=".35" stroke-width="2"/>
-          <circle cx="200" cy="200" r="150" fill="none" stroke="#ff6a1a" stroke-opacity=".25" stroke-width="2"/>
-          <circle cx="200" cy="200" r="110" fill="none" stroke="#ff6a1a" stroke-opacity=".18" stroke-width="2"/>
-          <circle cx="200" cy="200" r="70" fill="none" stroke="#ff6a1a" stroke-opacity=".12" stroke-width="2"/>
-        </svg>
-        <span class="ico"><%- icon('gauge', { size: 24 }) %></span>
-        <div class="big-num">30<small>%</small></div>
-        <h3>Inverter — lửa nhỏ thật sự nhỏ</h3>
-        <p>Thay vì bật – tắt liên tục như bếp từ thường, mạch Inverter điều chỉnh công suất mượt mà. Nồi nước dùng liu riu cả buổi, món kho không cháy đáy, hóa đơn điện giảm đến 30%.</p>
+        <figure class="inv-chart" aria-label="Biểu đồ so sánh công suất: bếp từ thường bật tắt liên tục, ProChef Inverter giữ công suất thấp ổn định">
+          <figcaption class="inv-legend">
+            <span class="inv-key on-off"><i></i>Bếp từ thường · bật – tắt</span>
+            <span class="inv-key inverter"><i></i>ProChef Inverter · êm, đều</span>
+          </figcaption>
+          <div class="inv-plot">
+          <svg viewBox="0 0 600 220" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="invFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ff6a1a" stop-opacity=".32"/>
+                <stop offset="1" stop-color="#ff6a1a" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="invStroke" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ff6a1a"/>
+                <stop offset="1" stop-color="#c2410c"/>
+              </linearGradient>
+            </defs>
+            <g class="inv-grid">
+              <line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="95" x2="600" y2="95"/><line x1="0" y1="200" x2="600" y2="200"/>
+            </g>
+            <line class="inv-target" x1="0" y1="148" x2="600" y2="148"/>
+            <path class="inv-onoff" pathLength="1" d="M0 200 V40 H55 V200 H105 V40 H160 V200 H210 V40 H265 V200 H315 V40 H370 V200 H420 V40 H475 V200 H525 V40 H580 V200 H600"/>
+            <path class="inv-area" d="M0 200 C40 200 50 148 90 148 S170 146 210 149 S300 150 340 147 S440 146 480 149 S560 148 600 148 V220 H0 Z" fill="url(#invFill)"/>
+            <path class="inv-line" pathLength="1" d="M0 200 C40 200 50 148 90 148 S170 146 210 149 S300 150 340 147 S440 146 480 149 S560 148 600 148" stroke="url(#invStroke)"/>
+          </svg>
+          <span class="inv-tag t-max">100% công suất</span>
+          <span class="inv-tag t-low">Liu riu ổn định</span>
+          <span class="inv-tag t-off">0%</span>
+          </div>
+        </figure>
+        <div class="inv-copy">
+          <div class="big-num"><b>30<small>%</small></b><span>tiết kiệm điện</span></div>
+          <div>
+            <h3>Inverter — lửa nhỏ thật sự nhỏ</h3>
+            <p>Thay vì bật – tắt liên tục như bếp từ thường, mạch Inverter điều chỉnh công suất mượt mà. Nồi nước dùng liu riu cả buổi, món kho không cháy đáy.</p>
+          </div>
+        </div>
       </div>
       <div class="tile reveal" style="--d: 80ms"><span class="ico"><%- icon('zap') %></span><h3>Booster đun sôi siêu tốc</h3><p>2 lít nước sôi trong khoảng 5 phút — nhanh gấp đôi bếp gas.</p></div>
       <div class="tile reveal" style="--d: 160ms"><span class="ico"><%- icon('lock') %></span><h3>Khóa trẻ em</h3><p>Chạm giữ 3 giây để khóa bảng điều khiển — bé nghịch cũng không bật được.</p></div>
