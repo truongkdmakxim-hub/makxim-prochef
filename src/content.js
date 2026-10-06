@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: 'Công nghệ Inverter khác gì bếp từ thường?',
-    a: 'Bếp thường giữ lửa nhỏ bằng cách bật – tắt liên tục nên nồi sôi không đều. Inverter điều chỉnh công suất liên tục, lửa nhỏ ổn định hơn, món hầm kho ngon hơn và tiết kiệm điện đến 30%.',
+    a: 'Bếp thường giữ lửa nhỏ bằng cách bật – tắt liên tục nên nồi sôi không đều. Inverter điều chỉnh công suất liên tục, lửa nhỏ ổn định hơn, món hầm kho ngon hơn và tiết kiệm điện đến 10%.',
   },
   {
     q: 'Chính sách bảo hành và đổi trả ra sao?',

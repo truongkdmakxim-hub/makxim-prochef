@@ -83,17 +83,17 @@ const products = [
     sku: 'MX-S3',
     line: 'don',
     tagline: 'Inverter — lửa nhỏ liên tục, không ngắt quãng',
-    short_desc: 'Công nghệ Inverter 2200W cho lửa nhỏ ổn định, tiết kiệm điện đến 30%. Chế độ Boost đun sôi siêu tốc.',
+    short_desc: 'Công nghệ Inverter 2200W cho lửa nhỏ ổn định, tiết kiệm điện đến 10%. Chế độ Boost đun sôi siêu tốc.',
     description:
       'Bếp từ thông thường giữ lửa nhỏ bằng cách bật – tắt liên tục, khiến nước dùng sôi không đều và món kho dễ cháy đáy. S3 Inverter điều chỉnh công suất liên tục, nhờ đó lửa nhỏ thực sự nhỏ và ổn định.\n\n' +
-      'Chế độ Boost đẩy công suất lên tối đa trong 5 phút để đun sôi nhanh. Mạch Inverter giúp giảm hao phí điện năng tới 30% so với bếp từ cơ bản cùng công suất.',
+      'Chế độ Boost đẩy công suất lên tối đa trong 5 phút để đun sôi nhanh. Mạch Inverter giúp giảm hao phí điện năng tới 10% so với bếp từ cơ bản cùng công suất.',
     price: 2490000,
     compare_price: 2890000,
     stock: 60,
     power_w: 2200,
     zones: 1,
     badge: 'Inverter',
-    highlights: ['Inverter 2200W', 'Tiết kiệm điện 30%', 'Chế độ Boost'],
+    highlights: ['Inverter 2200W', 'Tiết kiệm điện 10%', 'Chế độ Boost'],
     specs: [
       ['Loại bếp', 'Bếp từ đơn Inverter'],
       ['Công suất', '2200W (Boost)'],
