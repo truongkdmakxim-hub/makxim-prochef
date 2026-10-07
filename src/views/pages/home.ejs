@@ -243,6 +243,23 @@
 </section>
 <% } %>
 
+<% if (latestPosts.length) { %>
+<section class="section" style="padding-top: 0">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Tin tức &amp; Mẹo bếp</span>
+        <h2 class="h2">Bí quyết dùng bếp từ hiệu quả</h2>
+      </div>
+      <a class="btn btn-outline" href="/tin-tuc">Xem tất cả bài viết <%- icon('arrow-right', { size: 18 }) %></a>
+    </div>
+    <div class="post-grid">
+      <% latestPosts.forEach((post, index) => { %><%- include('../partials/post-card', { post, index }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
 <section class="section" style="padding-top: 0" id="faq">
   <div class="container faq-wrap">
     <div class="sticky reveal">

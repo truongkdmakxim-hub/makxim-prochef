@@ -72,7 +72,15 @@ Nếu chưa nhập key MoMo, lựa chọn MoMo hiển thị “Sắp ra mắt”
 
 Điền `SMTP_*` (Hostinger Email: `smtp.hostinger.com`, cổng `465`). Mỗi đơn mới gửi email cho `SHOP_EMAIL` và cho khách (nếu khách nhập email).
 
-## 6. Cần thay trước khi ra mắt
+## 6. Tin tức (blog SEO)
+
+Viết bài tại **Admin → Tin tức** (http://localhost:3000/admin/tin-tuc): tiêu đề, đường dẫn, tóm tắt, ảnh đại diện, nội dung, tiêu đề/mô tả SEO và sản phẩm liên quan. Tích **Đăng công khai** rồi chạy `npm run deploy:static` để bài lên `prochef.makxim.vn/tin-tuc`.
+
+- Định dạng nội dung: cách đoạn bằng dòng trống, `## Tiêu đề mục`, `- danh sách`, `**đậm**`, `[chữ](/san-pham/...)`, `![mô tả](/uploads/anh.jpg)` — hướng dẫn ngay dưới ô nội dung.
+- Mỗi bài tự có canonical, Open Graph (ảnh khi chia sẻ Facebook/Zalo), schema `BlogPosting` + breadcrumb, mục lục, và được thêm vào `sitemap.xml`.
+- Mục "Tin tức" trên menu, chân trang và trang chủ chỉ hiện khi có ít nhất một bài đã đăng. Có sẵn một bài nháp mẫu để tham khảo.
+
+## 7. Cần thay trước khi ra mắt
 
 - [ ] **Ảnh sản phẩm**: ảnh SVG hiện tại là ảnh minh họa tự tạo → thay bằng ảnh chụp thật (Admin → Sản phẩm).
 - [ ] **Giá, thông số, bảo hành** trong 6 sản phẩm mẫu.

@@ -55,6 +55,16 @@ function createApp() {
   app.use(csrf);
   app.use(locals);
   app.use(csrfGuard);
+  // "Tin tức" appears in the menus only once at least one post is published.
+  app.use(async (req, res, next) => {
+    if (req.path.startsWith('/admin')) return next();
+    try {
+      res.locals.hasPosts = (await require('./services/blog').countPublished()) > 0;
+    } catch {
+      res.locals.hasPosts = false;
+    }
+    next();
+  });
 
   app.get('/healthz', (req, res) => res.json({ ok: true }));
   app.use(require('./routes/shop'));

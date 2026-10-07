@@ -8,8 +8,9 @@ const config = require('../config');
 const { knex, hydrateProduct } = require('../db');
 const { serializeProduct } = require('../db/setup');
 const orders = require('../services/orders');
+const blog = require('../services/blog');
 const { flash, requireAdmin, verifyCsrf } = require('../middleware');
-const { slugify, ORDER_STATUS, PAYMENT_STATUS } = require('../utils/format');
+const { slugify, sqlTimestamp, ORDER_STATUS, PAYMENT_STATUS } = require('../utils/format');
 
 const router = express.Router();
 
@@ -29,14 +30,16 @@ const UPLOAD_ERRORS = {
   LIMIT_FILE_COUNT: 'Chỉ tải lên tối đa 8 ảnh mỗi lần.',
 };
 // Turn upload errors (ảnh quá nặng, quá nhiều ảnh) into a readable 400 instead of a generic 500.
+const withUploadErrors = (handler) => (req, res, next) => handler(req, res, (err) => {
+  if (err instanceof multer.MulterError) {
+    err.status = 400;
+    err.message = UPLOAD_ERRORS[err.code] || 'Không tải được ảnh lên, vui lòng thử lại.';
+  }
+  next(err);
+});
 const upload = {
-  array: (field, max) => (req, res, next) => multerUpload.array(field, max)(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      err.status = 400;
-      err.message = UPLOAD_ERRORS[err.code] || 'Không tải được ảnh lên, vui lòng thử lại.';
-    }
-    next(err);
-  }),
+  array: (field, max) => withUploadErrors(multerUpload.array(field, max)),
+  fields: (spec) => withUploadErrors(multerUpload.fields(spec)),
 };
 
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false });
@@ -295,6 +298,122 @@ router.post('/san-pham/:id/xoa', async (req, res) => {
     }
   }
   res.redirect('/admin/san-pham');
+});
+
+/* ---------- Posts (Tin tức) ---------- */
+
+router.get('/tin-tuc', async (req, res) => {
+  const posts = (await knex('posts').orderBy([{ column: 'is_published', order: 'asc' }, { column: 'published_at', order: 'desc' }, { column: 'id', order: 'desc' }])).map(blog.hydratePost);
+  res.render('admin/posts', { meta: { title: 'Tin tức' }, posts });
+});
+
+const EMPTY_POST = { title: '', slug: '', excerpt: '', content: '', cover_image: '', meta_title: '', meta_description: '', product_ids: [], is_published: false, publishedAt: null };
+
+async function renderPostForm(res, post, { errors = {}, isNew = false, status = 200 } = {}) {
+  const products = await knex('products').orderBy([{ column: 'line' }, { column: 'sort_order' }]).select('id', 'name', 'is_active');
+  res.status(status).render('admin/post-form', { meta: { title: isNew ? 'Viết bài mới' : post.title }, post, products, errors, isNew });
+}
+
+router.get('/tin-tuc/moi', (req, res) => renderPostForm(res, EMPTY_POST, { isNew: true }));
+
+router.get('/tin-tuc/:id', async (req, res, next) => {
+  const post = blog.hydratePost(await knex('posts').where({ id: req.params.id }).first());
+  if (!post) return next();
+  return renderPostForm(res, post);
+});
+
+const vnDay = (d) => new Date(d.getTime() + 7 * 3600 * 1000).toISOString().slice(0, 10);
+
+function readPostForm(body, files, existing) {
+  const cover = files?.cover?.[0] ? `/uploads/${files.cover[0].filename}` : null;
+  const coverUrl = String(body.cover_url || '').trim();
+  const inlineImages = (files?.inline_images || []).map((f) => `![](/uploads/${f.filename})`);
+  const content = [String(body.content || '').trim(), ...inlineImages].filter(Boolean).join('\n\n');
+  const isPublished = body.is_published === 'on';
+
+  // Ngày đăng: keep the stored time unless the editor picked a different day.
+  let publishedAt = existing?.publishedAt ? sqlTimestamp(existing.publishedAt) : null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(body.published_date || '') && (!existing?.publishedAt || vnDay(existing.publishedAt) !== body.published_date)) {
+    publishedAt = sqlTimestamp(new Date(`${body.published_date}T08:00:00+07:00`));
+  }
+  if (isPublished && !publishedAt) publishedAt = sqlTimestamp();
+
+  let coverImage = existing?.cover_image || null;
+  if (cover) coverImage = cover;
+  else if (/^(https?:\/\/|\/)/.test(coverUrl)) coverImage = coverUrl;
+  if (body.remove_cover === 'on' && !cover) coverImage = null;
+
+  const p = {
+    title: String(body.name || '').trim().slice(0, 200),
+    slug: slugify(body.slug || body.name || ''),
+    excerpt: String(body.excerpt || '').trim().slice(0, 500) || null,
+    content,
+    cover_image: coverImage,
+    meta_title: String(body.meta_title || '').trim().slice(0, 200) || null,
+    meta_description: String(body.meta_description || '').trim().slice(0, 300) || null,
+    product_ids: [].concat(body.product_ids || []).map(Number).filter(Boolean),
+    is_published: isPublished,
+    published_at: publishedAt,
+  };
+  const errors = {};
+  if (p.title.length < 5) errors.name = 'Nhập tiêu đề bài viết (ít nhất 5 ký tự).';
+  if (!p.slug) errors.slug = 'Đường dẫn không hợp lệ.';
+  if (p.is_published && !p.content) errors.content = 'Bài viết đăng công khai cần có nội dung.';
+  return { p, errors };
+}
+
+async function savePost(req, res, existing) {
+  const { p, errors } = readPostForm(req.body, req.files, existing);
+  const clash = await knex('posts').where({ slug: p.slug }).modify((q) => existing && q.whereNot({ id: existing.id })).first();
+  if (clash) errors.slug = 'Đường dẫn này đã được dùng cho bài khác.';
+  if (Object.keys(errors).length) {
+    return renderPostForm(res, { ...existing, ...blog.hydratePost({ ...p, product_ids: JSON.stringify(p.product_ids) }) }, { errors, isNew: !existing, status: 422 });
+  }
+  const row = { ...p, product_ids: JSON.stringify(p.product_ids) };
+  let id = existing?.id;
+  if (existing) {
+    await knex('posts').where({ id }).update({ ...row, updated_at: knex.fn.now() });
+  } else {
+    [id] = await knex('posts').insert(row);
+    if (typeof id === 'object') id = id.id;
+  }
+  flash(req, 'success', p.is_published
+    ? `Đã lưu bài "${p.title}". Chạy npm run deploy:static để đưa lên website.`
+    : `Đã lưu nháp "${p.title}".`);
+  res.redirect(`/admin/tin-tuc/${id}`);
+}
+
+const postUpload = upload.fields([{ name: 'cover', maxCount: 1 }, { name: 'inline_images', maxCount: 8 }]);
+
+router.post('/tin-tuc/moi', postUpload, verifyCsrf, (req, res) => savePost(req, res, null));
+
+router.post('/tin-tuc/:id', postUpload, verifyCsrf, async (req, res, next) => {
+  const existing = blog.hydratePost(await knex('posts').where({ id: req.params.id }).first());
+  if (!existing) return next();
+  return savePost(req, res, existing);
+});
+
+router.post('/tin-tuc/:id/an-hien', async (req, res) => {
+  const post = await knex('posts').where({ id: req.params.id }).first();
+  if (post) {
+    const publish = !post.is_published;
+    await knex('posts').where({ id: post.id }).update({
+      is_published: publish,
+      published_at: publish && !post.published_at ? sqlTimestamp() : post.published_at,
+      updated_at: knex.fn.now(),
+    });
+    flash(req, 'success', `"${post.title}" đã ${publish ? 'được đăng' : 'chuyển về nháp'}.`);
+  }
+  res.redirect('/admin/tin-tuc');
+});
+
+router.post('/tin-tuc/:id/xoa', async (req, res) => {
+  const post = await knex('posts').where({ id: req.params.id }).first();
+  if (post) {
+    await knex('posts').where({ id: post.id }).del();
+    flash(req, 'success', `Đã xóa bài "${post.title}".`);
+  }
+  res.redirect('/admin/tin-tuc');
 });
 
 /* ---------- Reviews ---------- */

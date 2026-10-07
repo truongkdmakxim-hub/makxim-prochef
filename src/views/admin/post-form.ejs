@@ -1,0 +1,77 @@
+<%- include('_head') %>
+<%
+  const v = (k) => (post[k] == null ? '' : post[k]);
+  const f = (k) => 'field' + (errors[k] ? ' has-error' : '');
+  const e = (k) => (errors[k] ? `<span class="error">${errors[k]}</span>` : '');
+  const action = isNew ? '/admin/tin-tuc/moi' : `/admin/tin-tuc/${post.id}`;
+  const vnDay = (d) => (d ? new Date(d.getTime() + 7 * 3600 * 1000).toISOString().slice(0, 10) : '');
+%>
+<div class="admin-top">
+  <div>
+    <a class="link" href="/admin/tin-tuc" style="font-size: .875rem"><%- icon('chevron-left', { size: 16 }) %> Tin tức</a>
+    <h1><%= isNew ? 'Viết bài mới' : post.title %></h1>
+  </div>
+  <% if (!isNew && post.is_published) { %><a class="btn btn-outline btn-sm" href="/tin-tuc/<%= post.slug %>" target="_blank" rel="noopener"><%- icon('external', { size: 16 }) %> Xem bài viết</a><% } %>
+</div>
+
+<% if (Object.keys(errors).length) { %><div class="alert alert-error" role="alert" style="margin-bottom: 16px"><%- icon('alert', { size: 18 }) %><span>Vui lòng kiểm tra lại các trường được đánh dấu.</span></div><% } %>
+
+<form class="admin-form" method="post" action="<%= action %>" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="stack">
+    <section class="card form-grid">
+      <div class="<%= f('name') %> full"><label for="name">Tiêu đề bài viết</label><input id="name" name="name" value="<%= v('title') %>" maxlength="200" required><%- e('name') %></div>
+      <div class="<%= f('slug') %> full"><label for="slug">Đường dẫn <span class="opt">(prochef.makxim.vn/tin-tuc/…)</span></label><input id="slug" name="slug" value="<%= v('slug') %>"><%- e('slug') %></div>
+      <div class="field full"><label for="excerpt">Tóm tắt <span class="opt">(2–3 câu, hiện ở danh sách bài và đầu bài viết)</span></label><textarea id="excerpt" name="excerpt" maxlength="500"><%= v('excerpt') %></textarea></div>
+      <div class="<%= f('content') %> full">
+        <label for="content">Nội dung</label>
+        <textarea id="content" name="content" style="min-height: 420px; font-family: ui-monospace, Consolas, monospace; font-size: .875rem; line-height: 1.6"><%= v('content') %></textarea><%- e('content') %>
+        <details class="hint muted" style="font-size: .8125rem; margin-top: 6px">
+          <summary style="cursor: pointer; font-weight: 600">Cách định dạng nội dung</summary>
+          <div style="display: grid; gap: 4px; margin-top: 8px">
+            <span>Cách đoạn bằng <b>một dòng trống</b>.</span>
+            <span><code>## Tiêu đề mục</code> · <code>### Tiêu đề nhỏ</code> — các mục ## tạo mục lục tự động.</span>
+            <span><code>- ý một</code> (mỗi dòng một ý) · <code>1. bước một</code> cho danh sách số.</span>
+            <span><code>**chữ đậm**</code> · <code>*chữ nghiêng*</code> · <code>&gt; trích dẫn</code></span>
+            <span><code>[chữ hiển thị](/san-pham/prochef-d7-inverter)</code> — liên kết (nên link về sản phẩm).</span>
+            <span><code>![mô tả ảnh](/uploads/ten-anh.jpg)</code> — ảnh trong bài, đặt trên một dòng riêng.</span>
+          </div>
+        </details>
+      </div>
+      <div class="field full"><label for="inline_images">Tải ảnh chèn vào bài <span class="opt">(ảnh sẽ được thêm vào cuối nội dung — cắt dán dòng ![](…) tới vị trí mong muốn)</span></label><input id="inline_images" name="inline_images" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple></div>
+    </section>
+
+    <section class="card form-grid">
+      <h2 class="full" style="margin: 0">SEO</h2>
+      <div class="field full"><label for="meta_title">Tiêu đề SEO <span class="opt">(để trống = dùng tiêu đề bài · nên dưới 60 ký tự)</span></label><input id="meta_title" name="meta_title" value="<%= v('meta_title') %>" maxlength="200"></div>
+      <div class="field full"><label for="meta_description">Mô tả SEO <span class="opt">(để trống = dùng tóm tắt · nên 120–160 ký tự)</span></label><textarea id="meta_description" name="meta_description" maxlength="300"><%= v('meta_description') %></textarea></div>
+    </section>
+  </div>
+
+  <div class="stack">
+    <section class="card form-grid">
+      <label class="check full"><input type="checkbox" name="is_published" <%= post.is_published ? 'checked' : '' %>> Đăng công khai</label>
+      <div class="field full"><label for="published_date">Ngày đăng <span class="opt">(để trống = hôm nay)</span></label><input id="published_date" name="published_date" type="date" value="<%= vnDay(post.publishedAt) %>"></div>
+    </section>
+
+    <section class="card" style="display: grid; gap: 12px">
+      <h2 style="margin: 0">Ảnh đại diện</h2>
+      <% if (post.cover_image) { %>
+        <img src="<%= post.cover_image %>" alt="" style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px">
+        <label class="check"><input type="checkbox" name="remove_cover"> Bỏ ảnh này</label>
+      <% } %>
+      <div class="field"><label for="cover">Tải ảnh <span class="opt">(ngang 16:9, ví dụ 1200×675)</span></label><input id="cover" name="cover" type="file" accept="image/jpeg,image/png,image/webp,image/avif"></div>
+      <div class="field"><label for="cover_url">Hoặc dán URL ảnh</label><input id="cover_url" name="cover_url" placeholder="https://…"></div>
+    </section>
+
+    <section class="card" style="display: grid; gap: 10px">
+      <h2 style="margin: 0">Sản phẩm liên quan</h2>
+      <p class="muted" style="margin: 0; font-size: .8125rem">Hiện ở cuối bài để khách bấm mua.</p>
+      <% products.forEach((p) => { %>
+        <label class="check"><input type="checkbox" name="product_ids" value="<%= p.id %>" <%= post.product_ids.includes(p.id) ? 'checked' : '' %>> <%= p.name %><% if (!p.is_active) { %> <span class="muted">(đang ẩn)</span><% } %></label>
+      <% }) %>
+    </section>
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Lưu bài viết</button>
+  </div>
+</form>
+<%- include('_foot') %>

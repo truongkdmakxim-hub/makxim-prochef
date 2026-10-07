@@ -1,0 +1,15 @@
+<article class="post-card reveal" style="--d: <%= (typeof index !== 'undefined' ? index % 3 : 0) * 80 %>ms">
+  <a class="media" href="/tin-tuc/<%= post.slug %>" tabindex="-1" aria-hidden="true">
+    <% if (post.cover_image) { %>
+      <img src="<%= post.cover_image %>" alt="" width="1200" height="675" loading="lazy" decoding="async">
+    <% } else { %>
+      <span class="placeholder"><%- icon('flame', { size: 40 }) %></span>
+    <% } %>
+  </a>
+  <div class="body">
+    <% if (post.publishedAt) { %><time datetime="<%= post.publishedAt.toISOString() %>"><%= fmt.date(post.publishedAt) %></time><% } %>
+    <h3><a href="/tin-tuc/<%= post.slug %>"><%= post.title %></a></h3>
+    <% if (post.excerpt) { %><p><%= post.excerpt %></p><% } %>
+    <span class="link">Đọc tiếp <%- icon('arrow-right', { size: 16 }) %></span>
+  </div>
+</article>

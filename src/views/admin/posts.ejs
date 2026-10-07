@@ -1,0 +1,31 @@
+<%- include('_head') %>
+<div class="admin-top"><h1>Tin tức</h1><div class="actions"><a class="btn btn-primary btn-sm" href="/admin/tin-tuc/moi"><%- icon('plus', { size: 16 }) %> Viết bài mới</a></div></div>
+<p class="muted" style="margin: -8px 0 16px; font-size: .875rem">Bài "Đã đăng" chỉ xuất hiện trên prochef.makxim.vn sau khi chạy <code>npm run deploy:static</code>.</p>
+<section class="card">
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th></th><th>Tiêu đề</th><th>Ngày đăng</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+      <% if (!posts.length) { %><tr><td colspan="5" class="muted" style="text-align: center; padding: 32px">Chưa có bài viết nào.</td></tr><% } %>
+      <% posts.forEach((p) => { %>
+        <tr>
+          <td><% if (p.cover_image) { %><img src="<%= p.cover_image %>" alt=""><% } %></td>
+          <td class="wrap"><a class="row-link" href="/admin/tin-tuc/<%= p.id %>"><%= p.title %></a><div class="muted" style="font-size: .8125rem">/tin-tuc/<%= p.slug %></div></td>
+          <td><%= p.publishedAt ? fmt.date(p.publishedAt) : '—' %></td>
+          <td><span class="pill <%= p.is_published ? 'tone-success' : 'tone-neutral' %>"><%= p.is_published ? 'Đã đăng' : 'Nháp' %></span></td>
+          <td class="right">
+            <a class="btn btn-ghost btn-sm" href="/admin/tin-tuc/<%= p.id %>"><%- icon('pencil', { size: 16 }) %> Sửa</a>
+            <form class="inline-form" method="post" action="/admin/tin-tuc/<%= p.id %>/an-hien">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-ghost btn-sm" type="submit"><%= p.is_published ? 'Gỡ xuống' : 'Đăng' %></button>
+            </form>
+            <form class="inline-form" method="post" action="/admin/tin-tuc/<%= p.id %>/xoa" data-confirm="Xóa hẳn bài “<%= p.title %>”? Thao tác không thể hoàn tác.">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-ghost btn-sm" type="submit" aria-label="Xóa <%= p.title %>"><%- icon('trash', { size: 16 }) %></button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table></div>
+</section>
+<%- include('_foot') %>

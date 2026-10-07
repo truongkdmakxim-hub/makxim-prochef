@@ -9,10 +9,31 @@ function money(value) {
   return `${moneyFormatter.format(Math.round(Number(value) || 0))}₫`;
 }
 
+const longDateFormatter = new Intl.DateTimeFormat('vi-VN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' });
+
+/** DB timestamp (Date, epoch ms or "YYYY-MM-DD HH:MM:SS" in UTC) → Date, or null. */
+function toDate(value) {
+  if (value == null || value === '') return null;
+  const d = value instanceof Date ? value
+    : typeof value === 'number' ? new Date(value)
+    : new Date(String(value).replace(' ', 'T') + (/[zZ+]|T.*-\d\d:?\d\d$/.test(String(value)) ? '' : 'Z'));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 function dateTime(value) {
   if (!value) return '';
-  const d = value instanceof Date ? value : new Date(String(value).replace(' ', 'T') + (/[zZ+]/.test(String(value)) ? '' : 'Z'));
-  return Number.isNaN(d.getTime()) ? String(value) : dateFormatter.format(d);
+  const d = toDate(value);
+  return d ? dateFormatter.format(d) : String(value);
+}
+
+function date(value) {
+  const d = toDate(value);
+  return d ? longDateFormatter.format(d) : '';
+}
+
+/** Date → "YYYY-MM-DD HH:MM:SS" (UTC), the same shape knex.fn.now() stores. */
+function sqlTimestamp(d = new Date()) {
+  return d.toISOString().slice(0, 19).replace('T', ' ');
 }
 
 function slugify(text) {
@@ -64,4 +85,4 @@ const PROVINCES = [
   'Quảng Trị', 'Sơn La', 'Tây Ninh', 'Thái Nguyên', 'Thanh Hóa', 'Tuyên Quang', 'Vĩnh Long',
 ];
 
-module.exports = { money, dateTime, slugify, paragraphs, ORDER_STATUS, PAYMENT_STATUS, PAYMENT_METHOD, PROVINCES };
+module.exports = { money, dateTime, date, toDate, sqlTimestamp, slugify, paragraphs, ORDER_STATUS, PAYMENT_STATUS, PAYMENT_METHOD, PROVINCES };

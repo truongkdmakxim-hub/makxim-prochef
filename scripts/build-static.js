@@ -12,6 +12,7 @@ const { setupDatabase } = require('../src/db/setup');
 const { createApp } = require('../src/app');
 const { knex } = require('../src/db');
 const { pages } = require('../src/content');
+const blog = require('../src/services/blog');
 
 const OUT = path.join(config.root, 'dist');
 
@@ -45,11 +46,14 @@ async function main() {
   if (path.resolve(config.uploadDir) !== path.join(config.root, 'public', 'uploads')) copyDir(config.uploadDir, path.join(OUT, 'uploads'));
 
   const products = await knex('products').where({ is_active: true }).select('slug');
+  const posts = await knex('posts').where({ is_published: true }).select('slug');
+  const blogPages = Array.from({ length: Math.max(0, Math.ceil(posts.length / blog.PAGE_SIZE) - 1) }, (_, i) => `/tin-tuc/trang/${i + 2}`);
   const routes = [
     '/', '/san-pham', '/bep-tu-don', '/bep-tu-doi', '/so-sanh', '/lien-he', '/gioi-thieu',
     '/gio-hang', '/thanh-toan',
     ...Object.keys(pages).filter((s) => s !== 'gioi-thieu').map((s) => `/chinh-sach/${s}`),
     ...products.map((p) => `/san-pham/${p.slug}`),
+    ...(posts.length ? ['/tin-tuc'] : []), ...blogPages, ...posts.map((p) => `/tin-tuc/${p.slug}`),
     '/products.json', '/sitemap.xml', '/robots.txt',
   ];
 

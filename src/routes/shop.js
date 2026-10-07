@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('../config');
 const catalog = require('../services/catalog');
 const orders = require('../services/orders');
+const blog = require('../services/blog');
 const { knex } = require('../db');
 const { faqs, pages } = require('../content');
 const { PROVINCES } = require('../utils/format');
@@ -23,11 +24,12 @@ if (config.staticMode) {
 }
 
 router.get('/', async (req, res) => {
-  const [featured, singleRange, doubleRange, reviews] = await Promise.all([
+  const [featured, singleRange, doubleRange, reviews, latestPosts] = await Promise.all([
     catalog.listProducts({ featured: true }),
     catalog.priceRange('don'),
     catalog.priceRange('doi'),
     knex('reviews').where({ is_active: true }).orderBy([{ column: 'sort_order' }, { column: 'id' }]),
+    blog.listPublished({ limit: 3 }),
   ]);
   res.render('pages/home', {
     meta: {
@@ -39,6 +41,7 @@ router.get('/', async (req, res) => {
     ranges: { don: singleRange, doi: doubleRange },
     faqs,
     reviews,
+    latestPosts,
   });
 });
 
@@ -125,16 +128,81 @@ router.get('/gioi-thieu', (req, res) => {
   res.render('pages/policy', { meta: { title: page.title, description: page.lead }, page, slug: 'gioi-thieu', pages });
 });
 
+/* ---------- Tin tức ---------- */
+
+const BLOG_TITLE = 'Tin tức & Mẹo bếp';
+const BLOG_LEAD = 'Kinh nghiệm chọn bếp từ, mẹo nấu nướng, cách vệ sinh và bảo quản bếp để dùng bền, tiết kiệm điện.';
+
+async function renderBlog(req, res, next, page) {
+  const total = await blog.countPublished();
+  if (!total) return next();
+  const pageCount = Math.max(1, Math.ceil(total / blog.PAGE_SIZE));
+  if (page > pageCount) return next();
+  const posts = await blog.listPublished({ page });
+  const path = page === 1 ? '/tin-tuc' : `/tin-tuc/trang/${page}`;
+  res.render('pages/blog', {
+    meta: {
+      title: page === 1 ? `${BLOG_TITLE} | Makxim ProChef` : `${BLOG_TITLE} — Trang ${page} | Makxim ProChef`,
+      description: BLOG_LEAD,
+      canonical: `${config.baseUrl}${path}`,
+    },
+    currentPath: '/tin-tuc',
+    title: BLOG_TITLE,
+    lead: BLOG_LEAD,
+    posts,
+    page,
+    pageCount,
+  });
+}
+
+router.get('/tin-tuc', (req, res, next) => renderBlog(req, res, next, 1));
+router.get('/tin-tuc/trang/:page', (req, res, next) => {
+  const page = parseInt(req.params.page, 10);
+  if (!(page >= 2)) return next();
+  return renderBlog(req, res, next, page);
+});
+
+router.get('/tin-tuc/:slug', async (req, res, next) => {
+  const post = await blog.getPublishedBySlug(req.params.slug);
+  if (!post) return next();
+  const [related, products] = await Promise.all([blog.getRelatedPosts(post), blog.getPostProducts(post)]);
+  const url = `${config.baseUrl}/tin-tuc/${post.slug}`;
+  const image = post.cover_image ? (post.cover_image.startsWith('http') ? post.cover_image : config.baseUrl + post.cover_image) : null;
+  res.render('pages/post', {
+    meta: {
+      title: post.meta_title || `${post.title} | Makxim ProChef`,
+      description: post.meta_description || post.excerpt,
+      canonical: url,
+      type: 'article',
+      image,
+      publishedTime: post.publishedAt?.toISOString(),
+      modifiedTime: (post.updatedAt || post.publishedAt)?.toISOString(),
+    },
+    currentPath: '/tin-tuc',
+    post,
+    body: blog.renderContent(post.content),
+    related,
+    products,
+    articleUrl: url,
+    articleImage: image,
+  });
+});
+
 router.get('/robots.txt', (req, res) => {
   res.type('text/plain').send(`User-agent: *\nDisallow: /admin\nDisallow: /gio-hang\nDisallow: /thanh-toan\nDisallow: /don-hang\nSitemap: ${config.baseUrl}/sitemap.xml\n`);
 });
 
 router.get('/sitemap.xml', async (req, res) => {
   const products = await knex('products').where({ is_active: true }).select('slug', 'updated_at');
-  const staticPaths = ['/', '/san-pham', '/bep-tu-don', '/bep-tu-doi', '/so-sanh', '/lien-he', '/gioi-thieu', ...Object.keys(pages).filter((s) => s !== 'gioi-thieu').map((s) => `/chinh-sach/${s}`)];
+  const posts = (await knex('posts').where({ is_published: true }).select('slug', 'published_at', 'updated_at')).map(blog.hydratePost);
+  const pageCount = Math.ceil(posts.length / blog.PAGE_SIZE);
+  const staticPaths = ['/', '/san-pham', '/bep-tu-don', '/bep-tu-doi', '/so-sanh', ...(posts.length ? ['/tin-tuc'] : []), '/lien-he', '/gioi-thieu', ...Object.keys(pages).filter((s) => s !== 'gioi-thieu').map((s) => `/chinh-sach/${s}`)];
+  for (let i = 2; i <= pageCount; i += 1) staticPaths.push(`/tin-tuc/trang/${i}`);
+  const lastmod = (d) => (d ? `<lastmod>${d.toISOString().slice(0, 10)}</lastmod>` : '');
   const urls = [
     ...staticPaths.map((p) => `<url><loc>${config.baseUrl}${p}</loc></url>`),
     ...products.map((p) => `<url><loc>${config.baseUrl}/san-pham/${p.slug}</loc></url>`),
+    ...posts.map((p) => `<url><loc>${config.baseUrl}/tin-tuc/${p.slug}</loc>${lastmod(p.updatedAt || p.publishedAt)}</url>`),
   ];
   res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`);
 });

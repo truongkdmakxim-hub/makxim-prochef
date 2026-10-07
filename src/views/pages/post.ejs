@@ -1,0 +1,82 @@
+<%- include('../partials/head', {
+  jsonLd: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.meta_description || post.excerpt || undefined,
+      image: articleImage ? [articleImage] : undefined,
+      datePublished: post.publishedAt ? post.publishedAt.toISOString() : undefined,
+      dateModified: (post.updatedAt || post.publishedAt) ? (post.updatedAt || post.publishedAt).toISOString() : undefined,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
+      author: { '@type': 'Organization', name: 'Makxim ProChef', url: baseUrl },
+      publisher: { '@type': 'Organization', name: 'Makxim ProChef', logo: { '@type': 'ImageObject', url: baseUrl + '/img/logo.png' } },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: baseUrl + '/' },
+        { '@type': 'ListItem', position: 2, name: 'Tin tức', item: baseUrl + '/tin-tuc' },
+        { '@type': 'ListItem', position: 3, name: post.title, item: articleUrl },
+      ],
+    },
+  ],
+}) %>
+<div class="container">
+  <article class="article">
+    <header class="article-head">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Trang chủ</a><%- icon('chevron-right') %><a href="/tin-tuc">Tin tức</a><%- icon('chevron-right') %><span aria-current="page"><%= post.title %></span>
+      </nav>
+      <h1 class="h1"><%= post.title %></h1>
+      <div class="article-meta">
+        <% if (post.publishedAt) { %><time datetime="<%= post.publishedAt.toISOString() %>"><%= fmt.date(post.publishedAt) %></time><span aria-hidden="true">·</span><% } %>
+        <span><%= body.readMinutes %> phút đọc</span>
+      </div>
+      <% if (post.excerpt) { %><p class="lead"><%= post.excerpt %></p><% } %>
+    </header>
+
+    <% if (post.cover_image) { %>
+      <figure class="article-cover"><img src="<%= post.cover_image %>" alt="<%= post.title %>" width="1200" height="675" fetchpriority="high"></figure>
+    <% } %>
+
+    <div class="article-layout">
+      <% if (body.toc.length >= 3) { %>
+        <nav class="article-toc" aria-label="Mục lục">
+          <b>Nội dung bài viết</b>
+          <ol><% body.toc.forEach((t) => { %><li><a href="#<%= t.id %>"><%= t.text %></a></li><% }) %></ol>
+        </nav>
+      <% } %>
+      <div class="prose"><%- body.html %></div>
+    </div>
+
+    <aside class="article-cta">
+      <div>
+        <b>Cần tư vấn chọn bếp?</b>
+        <span>Gọi hoặc nhắn Zalo — ProChef tư vấn miễn phí theo gian bếp của bạn.</span>
+      </div>
+      <a class="btn btn-primary" href="tel:<%= shop.hotline.replace(/\s/g, '') %>"><%- icon('phone', { size: 18 }) %> <%= shop.hotline %></a>
+    </aside>
+  </article>
+
+  <% if (products.length) { %>
+    <section class="article-more">
+      <h2 class="h3">Sản phẩm được nhắc đến</h2>
+      <div class="product-grid">
+        <% products.forEach((p, index) => { %><%- include('../partials/product-card', { p, index }) %><% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <% if (related.length) { %>
+    <section class="article-more">
+      <h2 class="h3">Bài viết khác</h2>
+      <div class="post-grid">
+        <% related.forEach((p, index) => { %><%- include('../partials/post-card', { post: p, index }) %><% }) %>
+      </div>
+    </section>
+  <% } %>
+  <div style="height: clamp(48px, 7vw, 96px)"></div>
+</div>
+<%- include('../partials/foot') %>

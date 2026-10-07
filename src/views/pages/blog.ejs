@@ -1,0 +1,40 @@
+<%- include('../partials/head', {
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: title + ' — Makxim ProChef',
+    url: baseUrl + '/tin-tuc',
+    blogPost: posts.map((p) => ({
+      '@type': 'BlogPosting',
+      headline: p.title,
+      url: baseUrl + '/tin-tuc/' + p.slug,
+      datePublished: p.publishedAt ? p.publishedAt.toISOString() : undefined,
+    })),
+  },
+}) %>
+<%
+  const pageHref = (n) => (n === 1 ? '/tin-tuc' : `/tin-tuc/trang/${n}`);
+%>
+<div class="container">
+  <header class="page-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Trang chủ</a><%- icon('chevron-right') %><span aria-current="page">Tin tức</span></nav>
+    <h1 class="h1"><%= title %></h1>
+    <p class="lead" style="max-width: 760px"><%= lead %></p>
+  </header>
+
+  <div class="post-grid">
+    <% posts.forEach((post, index) => { %><%- include('../partials/post-card', { post, index }) %><% }) %>
+  </div>
+
+  <% if (pageCount > 1) { %>
+    <nav class="pager" aria-label="Phân trang">
+      <% if (page > 1) { %><a href="<%= pageHref(page - 1) %>" rel="prev" aria-label="Trang trước"><%- icon('chevron-left', { size: 18 }) %></a><% } %>
+      <% for (let n = 1; n <= pageCount; n++) { %>
+        <a href="<%= pageHref(n) %>" <%- n === page ? 'aria-current="page"' : '' %>><%= n %></a>
+      <% } %>
+      <% if (page < pageCount) { %><a href="<%= pageHref(page + 1) %>" rel="next" aria-label="Trang sau"><%- icon('chevron-right', { size: 18 }) %></a><% } %>
+    </nav>
+  <% } %>
+  <div style="height: clamp(48px, 7vw, 96px)"></div>
+</div>
+<%- include('../partials/foot') %>
