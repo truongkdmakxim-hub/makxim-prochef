@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin
+Disallow: /gio-hang
+Disallow: /thanh-toan
+Disallow: /don-hang
+Sitemap: https://prochef.makxim.vn/sitemap.xml
